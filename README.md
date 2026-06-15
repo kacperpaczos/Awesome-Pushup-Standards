@@ -149,7 +149,7 @@ See [docs/monorepo-ci.md#todo--do-rozwazenia](docs/monorepo-ci.md#todo--do-rozwa
 git submodule update --init --recursive
 npm ci
 npm run build
-npm test
+npm run test:all
 npm run format
 npx nx affected -t lint,test,build --base=main
 npm run pushup

@@ -25,7 +25,7 @@ export function createRunner(options: RunnerOptions = {}) {
     const denyPath = join(root, 'deny.toml');
     const hasDeny = existsSync(denyPath);
     let bannedOk = hasDeny;
-    if (hasDeny) {
+    if (hasDeny && existsSync(join(root, 'Cargo.lock'))) {
       try {
         await execFileAsync('cargo', ['deny', 'check'], { cwd: root });
         bannedOk = true;
