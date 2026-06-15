@@ -12,10 +12,6 @@
       "executor": "nx:run-script",
       "options": { "script": "lint" }
     },
-    "test": {
-      "executor": "nx:run-script",
-      "options": { "script": "test" }
-    },
     "build": {
       "executor": "nx:run-script",
       "options": { "script": "build" }

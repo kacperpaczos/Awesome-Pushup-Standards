@@ -30,8 +30,12 @@ export function createRunner(options: RunnerOptions = {}) {
         await execFileAsync('cargo', ['deny', 'check'], { cwd: root });
         bannedOk = true;
       } catch (error: unknown) {
-        const err = error as NodeJS.ErrnoException;
-        bannedOk = err.code === 'ENOENT' ? hasDeny : false;
+        const err = error as { code?: string; stderr?: Buffer | string; message?: string };
+        const detail = `${err.stderr ?? ''}${err.message ?? ''}`;
+        const cargoMissing = err.code === 'ENOENT';
+        const denyMissing =
+          /no such subcommand.*deny|could not find.*deny|unknown proxy name.*deny/i.test(detail);
+        bannedOk = cargoMissing || denyMissing ? hasDeny : false;
       }
     }
 
