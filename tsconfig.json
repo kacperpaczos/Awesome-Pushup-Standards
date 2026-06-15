@@ -1,0 +1,30 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/plugins/python-stack-detector" },
+    { "path": "./packages/plugins/python-quality" },
+    { "path": "./packages/plugins/ts-stack-detector" },
+    { "path": "./packages/plugins/docs-quality" },
+    { "path": "./packages/plugins/security-sast" },
+    { "path": "./packages/plugins/rust-quality" },
+    { "path": "./packages/plugins/rust-modules" },
+    { "path": "./packages/plugins/cpp-quality" },
+    { "path": "./packages/plugins/qt-quality" },
+    { "path": "./packages/plugins/gtk-style" },
+    { "path": "./packages/plugins/architecture-rules" },
+    { "path": "./packages/plugins/api-openapi" },
+    { "path": "./packages/plugins/react-standards" },
+    { "path": "./packages/plugins/docker-quality" },
+    { "path": "./packages/plugins/error-logging" },
+    { "path": "./packages/plugins/cicd-quality" },
+    { "path": "./packages/plugins/contributor-hygiene" },
+    { "path": "./packages/plugins/release-quality" },
+    { "path": "./packages/plugins/llm-review" },
+    { "path": "./packages/presets/python-backend-strict" },
+    { "path": "./packages/presets/monorepo-ci-strict" },
+    { "path": "./packages/presets/react-app" },
+    { "path": "./packages/presets/rust-cli" },
+    { "path": "./packages/presets/cpp-qt-desktop" },
+    { "path": "./packages/presets/gtk-desktop" }
+  ]
+}

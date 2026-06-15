@@ -1,0 +1,9 @@
+{
+  "name": "cpp-qt-demo",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@awesome-pushup-standards/cpp-qt-desktop": "file:../../packages/presets/cpp-qt-desktop",
+    "@code-pushup/cli": "^0.92.1"
+  }
+}

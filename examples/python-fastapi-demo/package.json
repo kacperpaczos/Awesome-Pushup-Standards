@@ -1,0 +1,9 @@
+{
+  "name": "python-fastapi-demo",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@awesome-pushup-standards/python-backend-strict": "file:../../packages/presets/python-backend-strict",
+    "@code-pushup/cli": "^0.92.1"
+  }
+}

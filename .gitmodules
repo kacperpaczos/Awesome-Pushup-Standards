@@ -1,0 +1,6 @@
+[submodule "submodules/cli"]
+	path = submodules/cli
+	url = https://github.com/code-pushup/cli.git
+[submodule "submodules/community-plugins"]
+	path = submodules/community-plugins
+	url = https://github.com/code-pushup/community-plugins.git

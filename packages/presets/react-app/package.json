@@ -1,0 +1,30 @@
+{
+  "name": "@awesome-pushup-standards/react-app",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.lib.json",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@awesome-pushup-standards/architecture-rules": "0.0.0",
+    "@awesome-pushup-standards/react-standards": "0.0.0",
+    "@awesome-pushup-standards/security-sast": "0.0.0",
+    "@awesome-pushup-standards/ts-stack-detector": "0.0.0",
+    "@code-pushup/axe-plugin": "^0.92.1",
+    "@code-pushup/coverage-plugin": "^0.92.1",
+    "@code-pushup/eslint-plugin": "^0.92.1",
+    "@code-pushup/typescript-plugin": "^0.92.1"
+  },
+  "peerDependencies": {
+    "@code-pushup/models": "*"
+  }
+}

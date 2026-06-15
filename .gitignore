@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.code-pushup/
+coverage/
+*.tsbuildinfo
+.DS_Store
+.nx/
+.pytest_cache/

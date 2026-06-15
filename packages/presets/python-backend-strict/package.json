@@ -1,0 +1,29 @@
+{
+  "name": "@awesome-pushup-standards/python-backend-strict",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.lib.json",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@awesome-pushup-standards/api-openapi": "0.0.0",
+    "@awesome-pushup-standards/architecture-rules": "0.0.0",
+    "@awesome-pushup-standards/docker-quality": "0.0.0",
+    "@awesome-pushup-standards/docs-quality": "0.0.0",
+    "@awesome-pushup-standards/python-quality": "0.0.0",
+    "@awesome-pushup-standards/python-stack-detector": "0.0.0",
+    "@awesome-pushup-standards/security-sast": "0.0.0"
+  },
+  "peerDependencies": {
+    "@code-pushup/models": "*"
+  }
+}

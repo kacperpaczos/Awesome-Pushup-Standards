@@ -1,0 +1,24 @@
+name: Code PushUp
+description: Run code-pushup collect and post PR comment
+
+inputs:
+  token:
+    description: GitHub token
+    required: true
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - name: Collect report
+      shell: bash
+      run: npx code-pushup collect --skipPlugins llm-review
+    - name: Post PR comment
+      if: github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        if [ -f .code-pushup/report.md ]; then
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file .code-pushup/report.md || true
+        fi

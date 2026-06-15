@@ -1,0 +1,19 @@
+plugins:
+  - packages/plugins/**/*
+  - packages/presets/**/*
+
+presets:
+  - packages/presets/**/*
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: 'docs/**'
+      - any-glob-to-any-file: '*.md'
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: '.github/**'
+
+examples:
+  - changed-files:
+      - any-glob-to-any-file: 'examples/**'

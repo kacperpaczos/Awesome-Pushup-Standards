@@ -1,0 +1,9 @@
+{
+  "name": "rust-cli-demo",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@awesome-pushup-standards/rust-cli": "file:../../packages/presets/rust-cli",
+    "@code-pushup/cli": "^0.92.1"
+  }
+}

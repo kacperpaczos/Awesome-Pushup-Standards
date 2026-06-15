@@ -1,0 +1,31 @@
+{
+  "name": "awesome-pushup-standards",
+  "$schema": "./node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": ".",
+  "targets": {
+    "format": {
+      "executor": "nx:run-script",
+      "options": { "script": "format" }
+    },
+    "lint": {
+      "executor": "nx:run-script",
+      "options": { "script": "lint" }
+    },
+    "test": {
+      "executor": "nx:run-script",
+      "options": { "script": "test" }
+    },
+    "build": {
+      "executor": "nx:run-script",
+      "options": { "script": "build" }
+    },
+    "int-test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx code-pushup collect --skipPlugins llm-review",
+        "cwd": "."
+      }
+    }
+  }
+}

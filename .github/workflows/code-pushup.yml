@@ -1,0 +1,35 @@
+name: Code PushUp
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+env:
+  NX_NON_NATIVE_HASHER: true
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    name: Code PushUp report
+    if: github.event_name != 'pull_request' || !github.event.pull_request.head.repo.fork
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - uses: nrwl/nx-set-shas@v4
+      - run: npm ci
+      - run: npm run build
+      - uses: ./.github/actions/code-pushup
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

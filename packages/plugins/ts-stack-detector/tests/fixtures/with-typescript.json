@@ -1,0 +1,11 @@
+{
+  "name": "demo",
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "eslint": "^9.0.0",
+    "zod": "^3.24.0"
+  },
+  "dependencies": {
+    "react-hook-form": "^7.0.0"
+  }
+}
