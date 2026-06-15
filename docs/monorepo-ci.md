@@ -149,22 +149,28 @@ sequenceDiagram
 
 ### Checklist
 
-| Krok | Akcja                                                   | Status        |
-| ---- | ------------------------------------------------------- | ------------- |
-| 1    | Rozszerzyć `.gitignore` (`.nx/`, `.pytest_cache/`)      | Done          |
-| 2    | `npm ci && npm run build && npm test && npm run pushup` | Done lokalnie |
-| 3    | Changeset initial release w `.changeset/`               | Done          |
-| 4    | `git commit` + `git push -u origin main`                | Po pushu      |
-| 5    | GitHub → Environments → utworzyć **`release`**          | Ręcznie       |
-| 6    | npmjs.com → Trusted Publisher (repo + `publish.yml`)    | Ręcznie       |
-| 7    | Opcjonalnie: `NX_CLOUD_ACCESS_TOKEN`, `CP_API_KEY`      | Ręcznie       |
-| 8    | Branch protection na `main` (po zielonym CI)            | Ręcznie       |
+| Krok | Akcja                                                   | Status                                                                  |
+| ---- | ------------------------------------------------------- | ----------------------------------------------------------------------- |
+| 1    | Rozszerzyć `.gitignore` (`.nx/`, `.pytest_cache/`)      | Done                                                                    |
+| 2    | `npm ci && npm run build && npm test && npm run pushup` | Done lokalnie                                                           |
+| 3    | Changeset initial release w `.changeset/`               | Done                                                                    |
+| 4    | `git commit` + `git push -u origin main`                | Done — [repo](https://github.com/kacperpaczos/Awesome-Pushup-Standards) |
+| 5    | GitHub → Environments → utworzyć **`release`**          | Done (API)                                                              |
+| 5b   | Actions → allow workflows to create PRs                 | Done (API)                                                              |
+| 6    | npmjs.com → Trusted Publisher (repo + `publish.yml`)    | **Ręcznie**                                                             |
+| 7    | Opcjonalnie: `NX_CLOUD_ACCESS_TOKEN`, `CP_API_KEY`      | Ręcznie                                                                 |
+| 8    | Branch protection na `main` (po zielonym CI)            | Ręcznie                                                                 |
 
 ### npm OIDC (wymagane do publish)
 
 1. Zaloguj się na [npmjs.com](https://www.npmjs.com) → **Access Tokens** → **Trusted Publishers**.
-2. Dodaj GitHub Actions: organization/user, repository, workflow file `publish.yml`, environment `release`.
-3. W GitHub: **Settings → Environments → release** — bez wymaganych sekretów (OIDC zastępuje `NPM_TOKEN`).
+2. Dodaj GitHub Actions:
+   - **Organization/user:** `kacperpaczos`
+   - **Repository:** `Awesome-Pushup-Standards`
+   - **Workflow filename:** `publish.yml`
+   - **Environment:** `release`
+3. W GitHub: **Settings → Environments → release** — utworzone; OIDC zastępuje `NPM_TOKEN`.
+4. **Settings → Actions → General → Workflow permissions:** „Read and write” + zezwól na tworzenie PR (wymagane przez `release.yml` / changesets).
 
 ### Po pushu — weryfikacja
 

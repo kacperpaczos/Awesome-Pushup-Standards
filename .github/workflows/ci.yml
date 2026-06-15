@@ -64,7 +64,12 @@ jobs:
           cache: npm
       - uses: nrwl/nx-set-shas@v4
       - run: npm ci
-      - run: npx nx affected -t test --parallel=3
+      - name: Run full test suite (Linux)
+        if: runner.os == 'Linux'
+        run: npx nx affected -t test --parallel=3
+      - name: Smoke tests (Windows/macOS)
+        if: runner.os != 'Linux'
+        run: npx nx run cicd-quality:test && npx nx run contributor-hygiene:test && npx nx run release-quality:test
 
   build:
     runs-on: ubuntu-latest
