@@ -1,6 +1,6 @@
 {
   "name": "@awesome-pushup-standards/cpp-qt-desktop",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,11 +15,11 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@awesome-pushup-standards/cpp-quality": "0.0.0",
-    "@awesome-pushup-standards/docker-quality": "0.0.0",
-    "@awesome-pushup-standards/docs-quality": "0.0.0",
-    "@awesome-pushup-standards/qt-quality": "0.0.0",
-    "@awesome-pushup-standards/security-sast": "0.0.0"
+    "@awesome-pushup-standards/cpp-quality": "0.1.0",
+    "@awesome-pushup-standards/docker-quality": "0.1.0",
+    "@awesome-pushup-standards/docs-quality": "0.1.0",
+    "@awesome-pushup-standards/qt-quality": "0.1.0",
+    "@awesome-pushup-standards/security-sast": "0.1.0"
   },
   "peerDependencies": {
     "@code-pushup/models": "*"
