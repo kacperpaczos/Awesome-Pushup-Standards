@@ -17,10 +17,16 @@ const runnerArgs = {
 };
 
 describe('qt-quality', () => {
-  it('skipped audit has score 1', () => {
+  it('returns score 0 when tool not installed (strict rigor default)', () => {
     const out = skippedAudit('clazy-warnings', 'clazy');
+    expect(out.score).toBe(0);
+    expect(out.displayValue).toBe('clazy not installed');
+  });
+
+  it('returns score 1 skip when tool not installed in base rigor', () => {
+    const out = skippedAudit('clazy-warnings', 'clazy', 'base');
     expect(out.score).toBe(1);
-    expect(out.displayValue).toContain('skipped');
+    expect(out.displayValue).toBe('clazy not installed — skipped');
   });
 
   it('scores Qt project with clazy and clang-tidy checks', async () => {

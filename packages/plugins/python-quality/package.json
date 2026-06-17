@@ -18,5 +18,8 @@
   "peerDependencies": {
     "@code-pushup/models": "*",
     "@code-pushup/utils": "*"
+  },
+  "dependencies": {
+    "@awesome-pushup-standards/audit-contract": "0.1.0"
   }
 }

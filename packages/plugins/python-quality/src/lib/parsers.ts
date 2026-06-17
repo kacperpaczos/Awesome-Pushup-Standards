@@ -1,25 +1,34 @@
 import type { AuditOutput, Issue } from '@code-pushup/models';
+import {
+  DEFAULT_AUDIT_RIGOR,
+  toolMissingAudit,
+  type AuditRigor,
+} from '@awesome-pushup-standards/audit-contract';
 import type { ToolResult } from './run-tool.js';
 
-function skipped(slug: string, tool: string): AuditOutput {
-  return {
-    slug,
-    value: 0,
-    score: 1,
-    displayValue: `${tool} not found — skipped`,
-    details: {
-      issues: [
-        {
-          message: `${tool} is not installed — audit skipped`,
-          severity: 'info',
-        },
-      ],
-    },
-  };
+function skipped(slug: string, tool: string, rigor: AuditRigor = DEFAULT_AUDIT_RIGOR): AuditOutput {
+  const base = toolMissingAudit(slug, tool, rigor);
+  if (rigor === 'strict') {
+    return {
+      ...base,
+      details: {
+        issues: [
+          {
+            message: `${tool} is not installed — install it to enable this audit`,
+            severity: 'warning',
+          },
+        ],
+      },
+    };
+  }
+  return base;
 }
 
-export function parseRuff(result: ToolResult): AuditOutput {
-  if (result.status === 'skipped') return skipped('ruff-lint', 'ruff');
+export function parseRuff(
+  result: ToolResult,
+  rigor: AuditRigor = DEFAULT_AUDIT_RIGOR,
+): AuditOutput {
+  if (result.status === 'skipped') return skipped('ruff-lint', 'ruff', rigor);
 
   const output = result.stdout ?? (result.status === 'error' ? result.stdout : '');
   if (!output) {
@@ -72,8 +81,11 @@ export function parseRuff(result: ToolResult): AuditOutput {
   }
 }
 
-export function parseMypy(result: ToolResult): AuditOutput {
-  if (result.status === 'skipped') return skipped('type-errors', 'mypy');
+export function parseMypy(
+  result: ToolResult,
+  rigor: AuditRigor = DEFAULT_AUDIT_RIGOR,
+): AuditOutput {
+  if (result.status === 'skipped') return skipped('type-errors', 'mypy', rigor);
 
   const ok = result.status === 'ok';
   return {
@@ -84,8 +96,11 @@ export function parseMypy(result: ToolResult): AuditOutput {
   };
 }
 
-export function parseCoverage(result: ToolResult): AuditOutput {
-  if (result.status === 'skipped') return skipped('line-coverage', 'pytest');
+export function parseCoverage(
+  result: ToolResult,
+  rigor: AuditRigor = DEFAULT_AUDIT_RIGOR,
+): AuditOutput {
+  if (result.status === 'skipped') return skipped('line-coverage', 'pytest', rigor);
 
   const output = result.stdout ?? '';
   try {
@@ -108,8 +123,11 @@ export function parseCoverage(result: ToolResult): AuditOutput {
   }
 }
 
-export function parseBandit(result: ToolResult): AuditOutput {
-  if (result.status === 'skipped') return skipped('bandit-findings', 'bandit');
+export function parseBandit(
+  result: ToolResult,
+  rigor: AuditRigor = DEFAULT_AUDIT_RIGOR,
+): AuditOutput {
+  if (result.status === 'skipped') return skipped('bandit-findings', 'bandit', rigor);
 
   const output = result.stdout ?? (result.status === 'error' ? result.stdout : '');
   try {
@@ -132,8 +150,11 @@ export function parseBandit(result: ToolResult): AuditOutput {
   }
 }
 
-export function parsePipAudit(result: ToolResult): AuditOutput {
-  if (result.status === 'skipped') return skipped('dependency-vulnerabilities', 'pip-audit');
+export function parsePipAudit(
+  result: ToolResult,
+  rigor: AuditRigor = DEFAULT_AUDIT_RIGOR,
+): AuditOutput {
+  if (result.status === 'skipped') return skipped('dependency-vulnerabilities', 'pip-audit', rigor);
 
   const ok = result.status === 'ok';
   return {

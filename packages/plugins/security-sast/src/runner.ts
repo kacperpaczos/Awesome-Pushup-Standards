@@ -1,4 +1,9 @@
 import type { AuditOutput, AuditOutputs, RunnerArgs } from '@code-pushup/models';
+import {
+  DEFAULT_AUDIT_RIGOR,
+  toolMissingAudit,
+  type AuditRigor,
+} from '@awesome-pushup-standards/audit-contract';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import {
@@ -12,6 +17,7 @@ const execFileAsync = promisify(execFile);
 
 export type RunnerOptions = {
   rootDir?: string;
+  rigor?: AuditRigor;
 };
 
 function result(slug: string, score: number, displayValue: string, message?: string): AuditOutput {
@@ -26,7 +32,7 @@ function result(slug: string, score: number, displayValue: string, message?: str
   };
 }
 
-async function runDependencyAudit(root: string): Promise<AuditOutput> {
+async function runDependencyAudit(root: string, rigor: AuditRigor): Promise<AuditOutput> {
   const pm = detectPackageManager(root);
 
   if (pm === 'npm') {
@@ -74,12 +80,16 @@ async function runDependencyAudit(root: string): Promise<AuditOutput> {
     try {
       await execFileAsync('pip-audit', ['--format=json'], { cwd: root });
       return result('dependency-audit', 1, 'no vulnerabilities');
-    } catch {
+    } catch (error: unknown) {
+      const err = error as { code?: string | number };
+      if (err.code === 'ENOENT') {
+        return toolMissingAudit('dependency-audit', 'pip-audit', rigor);
+      }
       return result(
         'dependency-audit',
-        1,
-        'pip-audit skipped',
-        'pip-audit not available — skipped',
+        0,
+        'vulnerabilities found',
+        'pip-audit reported vulnerabilities',
       );
     }
   }
@@ -88,13 +98,12 @@ async function runDependencyAudit(root: string): Promise<AuditOutput> {
     try {
       await execFileAsync('cargo', ['audit'], { cwd: root });
       return result('dependency-audit', 1, 'no advisories');
-    } catch {
-      return result(
-        'dependency-audit',
-        1,
-        'cargo audit skipped',
-        'cargo audit not available — skipped',
-      );
+    } catch (error: unknown) {
+      const err = error as { code?: string | number };
+      if (err.code === 'ENOENT') {
+        return toolMissingAudit('dependency-audit', 'cargo audit', rigor);
+      }
+      return result('dependency-audit', 0, 'advisories found', 'cargo audit reported advisories');
     }
   }
 
@@ -103,12 +112,13 @@ async function runDependencyAudit(root: string): Promise<AuditOutput> {
 
 export function createRunner(options: RunnerOptions = {}) {
   const root = options.rootDir ?? '.';
+  const rigor = options.rigor ?? DEFAULT_AUDIT_RIGOR;
 
   return async (_args: RunnerArgs): Promise<AuditOutputs> => {
     const secretsOk = await hasGitleaksConfig(root);
     const sastOk = await hasSastTooling(root);
     const sbomOk = await hasSyftInCi(root);
-    const dependencyAudit = await runDependencyAudit(root);
+    const dependencyAudit = await runDependencyAudit(root, rigor);
 
     return [
       result(

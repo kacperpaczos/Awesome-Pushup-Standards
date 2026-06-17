@@ -1,10 +1,11 @@
 import type { AuditOutput, AuditOutputs, RunnerArgs } from '@code-pushup/models';
+import { DEFAULT_AUDIT_RIGOR, type AuditRigor } from '@awesome-pushup-standards/audit-contract';
 import { crawlFileSystem } from '@code-pushup/utils';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { runTool, skippedAudit } from './lib/run-tool.js';
 
-export type RunnerOptions = { cwd?: string };
+export type RunnerOptions = { cwd?: string; rigor?: AuditRigor };
 
 const CLANG_TIDY_CHECKS = 'bugprone-*,modernize-*,performance-*,readability-*';
 
@@ -21,8 +22,9 @@ function toolAudit(
   result: Awaited<ReturnType<typeof runTool>>,
   okLabel: string,
   failLabel: string,
+  rigor: AuditRigor,
 ): AuditOutput {
-  if (result.status === 'skipped') return skippedAudit(slug, tool);
+  if (result.status === 'skipped') return skippedAudit(slug, tool, rigor);
   const ok = result.status === 'ok';
   return {
     slug,
@@ -34,6 +36,7 @@ function toolAudit(
 
 export function createRunner(options: RunnerOptions = {}) {
   const cwd = options.cwd ?? '.';
+  const rigor = options.rigor ?? DEFAULT_AUDIT_RIGOR;
 
   return async (_args: RunnerArgs): Promise<AuditOutputs> => {
     const files = await sourceFiles(cwd);
@@ -62,9 +65,17 @@ export function createRunner(options: RunnerOptions = {}) {
         clangTidy,
         'no warnings',
         'clang-tidy warnings',
+        rigor,
       ),
-      toolAudit('cppcheck-issues', 'cppcheck', cppcheck, 'no issues', 'cppcheck issues'),
-      toolAudit('format-violations', 'clang-format', clangFormat, 'formatted', 'format violations'),
+      toolAudit('cppcheck-issues', 'cppcheck', cppcheck, 'no issues', 'cppcheck issues', rigor),
+      toolAudit(
+        'format-violations',
+        'clang-format',
+        clangFormat,
+        'formatted',
+        'format violations',
+        rigor,
+      ),
     ];
   };
 }

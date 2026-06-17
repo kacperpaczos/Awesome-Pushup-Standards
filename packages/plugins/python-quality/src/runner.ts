@@ -1,4 +1,5 @@
 import type { AuditOutputs, RunnerArgs } from '@code-pushup/models';
+import { DEFAULT_AUDIT_RIGOR, type AuditRigor } from '@awesome-pushup-standards/audit-contract';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseBandit, parseCoverage, parseMypy, parsePipAudit, parseRuff } from './lib/parsers.js';
@@ -6,6 +7,7 @@ import { runTool } from './lib/run-tool.js';
 
 export type RunnerOptions = {
   cwd?: string;
+  rigor?: AuditRigor;
 };
 
 function banditArgs(cwd: string): string[] {
@@ -18,6 +20,7 @@ function banditArgs(cwd: string): string[] {
 
 export function createRunner(options: RunnerOptions = {}) {
   const cwd = options.cwd ?? '.';
+  const rigor = options.rigor ?? DEFAULT_AUDIT_RIGOR;
 
   return async (_args: RunnerArgs): Promise<AuditOutputs> => {
     const [ruff, mypy, coverage, bandit, pipAudit] = await Promise.all([
@@ -29,11 +32,11 @@ export function createRunner(options: RunnerOptions = {}) {
     ]);
 
     return [
-      parseRuff(ruff),
-      parseMypy(mypy),
-      parseCoverage(coverage),
-      parseBandit(bandit),
-      parsePipAudit(pipAudit),
+      parseRuff(ruff, rigor),
+      parseMypy(mypy, rigor),
+      parseCoverage(coverage, rigor),
+      parseBandit(bandit, rigor),
+      parsePipAudit(pipAudit, rigor),
     ];
   };
 }

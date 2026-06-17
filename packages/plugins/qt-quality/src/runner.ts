@@ -1,10 +1,11 @@
 import type { AuditOutput, AuditOutputs, RunnerArgs } from '@code-pushup/models';
+import { DEFAULT_AUDIT_RIGOR, type AuditRigor } from '@awesome-pushup-standards/audit-contract';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { runTool, skippedAudit } from './lib/run-tool.js';
 
-export type RunnerOptions = { rootDir?: string };
+export type RunnerOptions = { rootDir?: string; rigor?: AuditRigor };
 
 async function readOptional(path: string): Promise<string> {
   if (!existsSync(path)) return '';
@@ -25,6 +26,7 @@ function hasQtClangTidyChecks(clangTidy: string): boolean {
 
 export function createRunner(options: RunnerOptions = {}) {
   const rootDir = options.rootDir ?? '.';
+  const rigor = options.rigor ?? DEFAULT_AUDIT_RIGOR;
 
   return async (_args: RunnerArgs): Promise<AuditOutputs> => {
     const cmakePath = join(rootDir, 'CMakeLists.txt');
@@ -43,7 +45,7 @@ export function createRunner(options: RunnerOptions = {}) {
     } else {
       const clazy = await runTool('clazy', ['--version'], rootDir);
       if (clazy.status === 'skipped') {
-        clazyOut = skippedAudit('clazy-warnings', 'clazy');
+        clazyOut = skippedAudit('clazy-warnings', 'clazy', rigor);
       } else {
         clazyOut = {
           slug: 'clazy-warnings',

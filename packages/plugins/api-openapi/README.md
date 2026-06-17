@@ -2,6 +2,8 @@
 
 Heuristic plugin for OpenAPI spec presence, Spectral linting, API versioning, and schema-first design.
 
+Missing Spectral CLI: `rigor: 'strict'` (default) returns `score: 0`; `rigor: 'base'` returns `score: 1` with `… — skipped`.
+
 ## Audits
 
 - `has-openapi-spec` — `openapi.yaml` / `openapi.json` exists
