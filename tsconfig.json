@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
+    { "path": "./packages/internal/audit-contract" },
     { "path": "./packages/plugins/python-stack-detector" },
     { "path": "./packages/plugins/python-quality" },
     { "path": "./packages/plugins/ts-stack-detector" },
