@@ -1,0 +1,31 @@
+services:
+  e2e-node:
+    build:
+      context: .
+      dockerfile: docker/e2e/node/Dockerfile
+    image: e2e-node:20
+  e2e-python:
+    build:
+      context: .
+      dockerfile: docker/e2e/python/Dockerfile
+    image: e2e-python:3.12
+  e2e-rust:
+    build:
+      context: .
+      dockerfile: docker/e2e/rust/Dockerfile
+    image: e2e-rust:1.83
+  e2e-cpp:
+    build:
+      context: .
+      dockerfile: docker/e2e/cpp/Dockerfile
+    image: e2e-cpp:qt
+  e2e-gtk:
+    build:
+      context: .
+      dockerfile: docker/e2e/gtk/Dockerfile
+    image: e2e-gtk:c
+  e2e-security:
+    build:
+      context: .
+      dockerfile: docker/e2e/security/Dockerfile
+    image: e2e-security
