@@ -99,7 +99,13 @@ jobs:
           node-version-file: .node-version
           cache: npm
       - run: npm ci
-      - run: npm run docs:build
+      - run: npm run docs:verify
+      - run: npm run build -w docs
+      - name: Check documentation links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --config .lychee.toml 'apps/docs/dist/**/*.html'
+          fail: true
       - name: Upload documentation site
         if: always()
         uses: actions/upload-artifact@v4
