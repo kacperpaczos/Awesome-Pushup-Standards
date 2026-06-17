@@ -27,10 +27,9 @@ Run all three layers of the pyramid in order:
 npm run test:all
 
 # 2. E2E — 19 plugins × good/bad = 38 collects + logs (sequential)
-npm run e2e:all            # build images + run (first time)
-# or:
-npm run e2e:build-images   # images only
-npm run e2e                # runs scripts/run-e2e.mjs — logs under e2e/plugin-*-e2e/logs/
+npm run e2e                 # existing Docker images
+npm run e2e:rebuild         # rebuild images + run (first time / after Dockerfile changes)
+npm run e2e:images          # Docker images only
 
 # 3. Smoke — full monorepo preset (all plugins together)
 npm run pushup
@@ -44,20 +43,18 @@ Expected E2E result: **Test Files 19 passed · Tests 38 passed**.
 When unit tests and build already succeeded:
 
 ```bash
-npm run e2e:build-images
+npm run e2e:images   # once, or when docker/e2e/* changed
 npm run e2e
-# one-shot (images + tests + logs):
-npm run e2e:all
+# or one command (images + tests):
+npm run e2e:rebuild
 ```
 
-`npm run e2e` calls [`scripts/run-e2e.mjs`](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/scripts/run-e2e.mjs) — sequential Vitest, `E2E_COLLECT_LOG=1`, summary of log paths at the end.
+`npm run e2e` runs Vitest sequentially (`maxWorkers: 1`), enables collect logging, and prints log paths at the end.
 
 Single plugin:
 
 ```bash
-node scripts/run-e2e.mjs python-quality
-# or with explicit "keep reports" compatibility flag (reports stay in logs/):
-node scripts/run-e2e.mjs --keep-reports python-quality
+npm run e2e -- python-quality
 ```
 
 Alternative via Nx (Vitest directly — logs still enabled via `vitest.e2e.config.ts` globalSetup):
@@ -66,13 +63,7 @@ Alternative via Nx (Vitest directly — logs still enabled via `vitest.e2e.confi
 npx nx run-many -t e2e --parallel=1
 ```
 
-### Keep code-pushup reports on disk
-
-By default, `npm run e2e` keeps canonical reports under `logs/` and cleans fixture `.code-pushup/` directories. To run with the compatibility flag:
-
-```bash
-npm run e2e:keep-reports
-```
+### Reports on disk
 
 Canonical reports are written to:
 
@@ -81,7 +72,7 @@ e2e/plugin-<slug>-e2e/logs/good/.code-pushup/report.json
 e2e/plugin-<slug>-e2e/logs/bad/.code-pushup/report.json
 ```
 
-`E2E_KEEP_REPORTS=1` is preserved for backward compatibility, but fixture reports are no longer the source of truth.
+Fixture `.code-pushup/` directories are cleaned after each test; `logs/` is the source of truth.
 
 ### Single plugin
 
@@ -102,7 +93,7 @@ docker run --rm \
   -w "$FIXTURE" \
   --network host \
   e2e-python:3.12 \
-  bash -lc "git config --global --add safe.directory $REPO && npx code-pushup collect --config code-pushup.config.ts"
+  bash -c "git config --global --add safe.directory $REPO && npx code-pushup collect --config code-pushup.config.ts"
 ```
 
 Use the Docker image from the [plugin → image table](#docker-images) below (`e2e-node:20` for Node plugins, etc.).
@@ -116,6 +107,117 @@ E2E_USE_DOCKER=0 npm run e2e
 ```
 
 Python, Rust, C++/Qt, GTK, and security plugins require Docker images.
+
+## How a collect run works
+
+Each E2E test is a real `code-pushup collect` inside Docker, followed by assertions on a fresh host report. The line `E2E collect log → …` at startup only initializes the combined log file — tests run immediately after.
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant RunE2E as run-e2e.mjs
+  participant Vitest
+  participant GlobalSetup as globalSetup
+  participant Test as collect.e2e.test.ts
+  participant Docker
+  participant CP as code-pushup collect
+  participant Logs as e2e/logs/
+
+  User->>RunE2E: npm run e2e
+  RunE2E->>Vitest: vitest run --config vitest.e2e.config.ts
+  Vitest->>GlobalSetup: initCollectLog()
+  GlobalSetup->>Logs: create e2e/logs/latest.log
+  GlobalSetup-->>User: E2E collect log path
+
+  loop 38 tests (19 plugins x good/bad)
+    Test->>Test: runCollectInContainer()
+    Test->>Docker: tool preflight (command -v + --version)
+    Docker-->>Test: toolPreflight in meta.json / collect.log
+    Test->>Docker: docker run -v repo -w fixture image
+    Docker->>CP: npx code-pushup collect
+    CP->>Logs: report.json under logs/good|bad/.code-pushup/
+    Test->>Test: assertCollectResultIsFresh()
+    Test->>Test: assertGoodFixtureContract / assertBadFixtureContract
+    Test->>Logs: collect.log, stdout, stderr, meta.json
+  end
+
+  RunE2E->>Logs: write index.json
+```
+
+| npm script              | What it does                              |
+| ----------------------- | ----------------------------------------- |
+| `npm run e2e`           | Run all 38 collects (existing images)     |
+| `npm run e2e:rebuild`   | `docker compose build` then `npm run e2e` |
+| `npm run e2e:images`    | Build Docker images only                  |
+| `npm run e2e -- <slug>` | One plugin (good + bad)                   |
+
+## E2E contract standard
+
+Every plugin E2E test follows the same **contract-first** flow. The line `E2E collect log → …` at startup only initializes the combined log — the real test is preflight → collect → assertions on a fresh report.
+
+### Flow (per good/bad fixture)
+
+1. **Tool preflight** — before `code-pushup collect`, the runner checks each tool from `PLUGIN_CONTRACTS[slug].tools` inside the same Docker image and mount (`command -v` + `--version`). Missing required tools fail fast with a clear error.
+2. **Collect** — `code-pushup collect` runs in Docker with host-owned output under `logs/<variant>/.code-pushup/`.
+3. **Fresh report** — `assertCollectResultIsFresh` requires a new `report.json` (mtime, no `EACCES`, no “Generated reports failed”).
+4. **Contract assertions** — good/bad rules from `testing/e2e-utils/src/plugin-contracts.ts`.
+5. **Logs & artifacts** — `collect.log`, `stdout.log`, `stderr.log`, `meta.json` (includes `toolPreflight`), `artifacts/report.json`.
+
+### `PluginContract` fields
+
+Defined in `testing/e2e-utils/src/plugin-contracts.ts`:
+
+| Field                 | Purpose                                                                  |
+| --------------------- | ------------------------------------------------------------------------ |
+| `image`               | Docker image (`e2e-node:20`, `e2e-python:3.12`, …)                       |
+| `tools`               | Required toolchain preflight specs (`name`, `command`, optional `args`)  |
+| `good.requiredAudits` | Audits that must **not** be skipped                                      |
+| `good.minScore`       | Minimum score (usually `0.9`) for non-excluded audits                    |
+| `good.excludeSlugs`   | Audits excluded from min-score check (optional tools, coverage, etc.)    |
+| `bad.mode`            | `failing-audit` (target audit `score === 0`) or `all-skipped` (LLM mock) |
+| `bad.failingAudit`    | Slug expected to fail on the bad fixture                                 |
+
+### Standard test file
+
+Most plugins use one line:
+
+```ts
+import { createStandardPluginE2eTests } from '@awesome-pushup/e2e-utils';
+
+createStandardPluginE2eTests('python-quality');
+```
+
+That helper runs good + bad collects, asserts the contract, and cleans fixture `.code-pushup/` after each test (canonical reports stay in `logs/`).
+
+### Reading logs and reports
+
+**`collect.log`** — full section per collect: image, docker command, tool preflight table, stdout/stderr, audit summary, full `report.json`.
+
+**`meta.json`** — machine-readable metadata:
+
+```json
+{
+  "toolPreflight": [
+    { "name": "ruff", "status": "ok", "path": "/usr/local/bin/ruff", "version": "ruff 0.15.17" }
+  ],
+  "exitCode": 0,
+  "durationMs": 7000,
+  "reportPath": "…/logs/good/.code-pushup/report.json"
+}
+```
+
+**`report.json`** — code-pushup output; assert on audit `slug`, `score`, and `displayValue`. Required audits must not contain `skipped` / `not found` / `not installed`.
+
+**Combined index** — `e2e/logs/index.json` lists all 38 entries; `e2e/logs/latest.log` concatenates every section from the last run.
+
+### Adding a new plugin (contract checklist)
+
+1. Implement plugin + unit tests under `packages/plugins/<slug>/`.
+2. Add `PLUGIN_CONTRACTS['<slug>']` with `image`, `tools`, `good`, and `bad` fixtures.
+3. Scaffold E2E: `node scripts/scaffold-e2e.mjs` (or copy an existing `e2e/plugin-*-e2e/` layout).
+4. Create **good** fixture (tools green, audits ≥ min score) and **bad** fixture (one audit fails with `score=0`).
+5. Use `createStandardPluginE2eTests('<slug>')` unless the plugin needs custom setup (e.g. LLM mock server).
+6. Verify: `npm run e2e:images && npm run e2e -- <slug>` — check `meta.json` has populated `toolPreflight`.
 
 ## Test pyramid
 
@@ -153,15 +255,13 @@ E2E runs **sequentially** (`maxWorkers: 1`) — one Docker collect at a time. Do
 
 Quick reference (see [Running tests for all 19 plugins](#running-tests-for-all-19-plugins) above for the full walkthrough):
 
-Quick reference — all via [`scripts/run-e2e.mjs`](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/scripts/run-e2e.mjs):
+Quick reference:
 
 ```bash
 npm run e2e                  # all plugins + logs
-npm run e2e:all              # build images + e2e + logs
-npm run e2e:keep-reports     # compatibility alias; canonical reports still in logs/
-npm run e2e:build-images     # Docker images only
-
-node scripts/run-e2e.mjs --build-images docs-quality   # one plugin
+npm run e2e:rebuild          # rebuild images + e2e + logs
+npm run e2e:images           # Docker images only
+npm run e2e -- docs-quality  # one plugin
 ```
 
 ## Collect logs (stdout + report per container)
@@ -179,7 +279,7 @@ e2e/plugin-<slug>-e2e/logs/good/
 ├── stderr.log       # container stderr only
 ├── report.json      # code-pushup report (host copy)
 ├── report.md        # if generated
-├── meta.json        # image, exit code, duration, artifact paths
+├── meta.json        # image, exit code, duration, toolPreflight, artifact paths
 └── artifacts/       # copy of persisted outputs from logs/<variant>/.code-pushup/*
 
 e2e/plugin-<slug>-e2e/logs/bad/
@@ -203,7 +303,7 @@ e2e/logs/index.json
 
 Vitest prints the path at startup: `E2E collect log → …/e2e/logs/latest.log`.
 
-Each section includes fixture path, Docker image, command, stdout/stderr, audit summary, and full `report.json`.
+Each section includes fixture path, Docker image, **tool preflight**, command, stdout/stderr, audit summary, and full `report.json`.
 
 ```bash
 grep -A30 'plugin-python-quality-e2e/mocks/fixtures/good' e2e/logs/latest.log
@@ -287,10 +387,16 @@ Fixtures import **one** plugin from `@awesome-pushup-standards/<slug>` via `code
 
 `testing/e2e-utils/` provides:
 
-- `runCollectInContainer({ fixtureRelPath, image })` — Docker collect; writes `e2e/plugin-*-e2e/logs/<good|bad>/` + `e2e/logs/latest.log`
-- `cleanupE2eFixtureReports(fixtureRelPath)` — always cleans fixture `.code-pushup/` (reports are canonical in logs/)
-- `readReport`, `assertAudits`, `assertAllAuditsMinScore`
-- `isDockerAvailable`, `E2E_IMAGES`
+- `createStandardPluginE2eTests(slug)` — good/bad contract test boilerplate
+- `runPluginContractCollect`, `assertGoodFixtureContract`, `assertBadFixtureContract`
+- `runCollectInContainer({ fixtureRelPath, image, pluginSlug })` — preflight + Docker collect; writes `logs/<good|bad>/` + `e2e/logs/latest.log`
+- `runToolPreflightInContainer`, `assertToolPreflightOk` — toolchain verification before collect
+- `PLUGIN_CONTRACTS` — image, tools, good/bad contract per plugin
+- `cleanupE2eFixtureReports(fixtureRoot)` — always cleans fixture `.code-pushup/` (reports are canonical in `logs/`)
+- `readReport`, `assertAudits`, `assertAllAuditsMinScore`, `assertNoSkippedRequired`
+- `isDockerAvailable`, `E2E_IMAGES`, `dockerRuntimeEnv`, `E2E_DOCKER_PATH`
+
+See [E2E contract standard](#e2e-contract-standard) for the full flow.
 
 ## Plugin → image map
 
@@ -302,7 +408,7 @@ node scripts/scaffold-e2e.mjs
 
 ## CI
 
-GitHub Actions job `e2e` in `.github/workflows/ci.yml` runs `npm run e2e:all` and uploads `e2e/logs/latest.log`, `e2e/logs/index.json`, and `e2e/plugin-*-e2e/logs/**` as artifacts.
+GitHub Actions job `e2e` in `.github/workflows/ci.yml` runs `npm run e2e:rebuild` and uploads `e2e/logs/latest.log`, `e2e/logs/index.json`, and `e2e/plugin-*-e2e/logs/**` as artifacts.
 
 ## Verification checklist
 
@@ -310,7 +416,7 @@ Status operacyjny: **[backlog.md#pending--najbliższe-kroki](/project/backlog/#p
 
 | Step                                 | Command / action                     | Status                          |
 | ------------------------------------ | ------------------------------------ | ------------------------------- |
-| Build Docker images                  | `npm run e2e:build-images`           | **Done** (obrazy zbudowane)     |
+| Build Docker images                  | `npm run e2e:images`                 | **Done** (obrazy zbudowane)     |
 | Run all plugin E2E locally           | `npm run e2e` (38 tests, 19 plugins) | **Done** (38/38 passed, Docker) |
 | CI job `e2e` green on GitHub Actions | push to `main` / PR                  | **Pending**                     |
 
@@ -319,7 +425,8 @@ After all three pass, update [backlog.md](/project/backlog/): move E2E verificat
 ## Adding a new plugin
 
 1. Implement plugin under `packages/plugins/<slug>/` with unit tests (min. 2 cases).
-2. Add entry to `scripts/scaffold-e2e.mjs` and run `node scripts/scaffold-e2e.mjs`.
-3. Verify locally: `npm run e2e:build-images && npx vitest run e2e/plugin-<slug>-e2e/tests/collect.e2e.test.ts --config vitest.e2e.config.ts --maxWorkers=1`.
+2. Add `PLUGIN_CONTRACTS['<slug>']` in `testing/e2e-utils/src/plugin-contracts.ts` (image, tools, good/bad).
+3. Add entry to `scripts/scaffold-e2e.mjs` and run `node scripts/scaffold-e2e.mjs`.
+4. Verify locally: `npm run e2e:images && npm run e2e -- <slug>` — confirm `meta.json` lists tool versions.
 
-See [CONTRIBUTING.md](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/CONTRIBUTING.md).
+See [E2E contract standard](#e2e-contract-standard) and [CONTRIBUTING.md](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/CONTRIBUTING.md).

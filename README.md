@@ -95,7 +95,9 @@ npx code-pushup collect
 | ----- | ------------------ | ----------------------------------------- |
 | Unit  | `npm run test:all` | 19 plugins, min. 2 cases each             |
 | E2E   | `npm run e2e`      | 19× Docker collect (sequential, ~2–4 min) |
-| Smoke | `npm run pushup`   | Full `monorepo-ci-strict` preset          |
+
+E2E uses a **contract-first** standard: tool preflight → collect → fresh report → good/bad assertions. Commands: `npm run e2e`, `npm run e2e:rebuild`, `npm run e2e:images`. Details: [E2E contract standard](apps/docs/src/content/docs/guides/e2e-testing.md#e2e-contract-standard).
+| Smoke | `npm run pushup` | Full `monorepo-ci-strict` preset |
 
 Full walkthrough (all layers): [E2E testing — all 19 plugins](apps/docs/src/content/docs/guides/e2e-testing.md#running-tests-for-all-19-plugins) · [Troubleshooting hangs](apps/docs/src/content/docs/guides/e2e-testing.md#troubleshooting) · local preview: `npm run docs:dev`.
 
@@ -159,8 +161,10 @@ git submodule update --init --recursive
 npm ci
 npm run build
 npm run test:all
-npm run e2e:build-images
+npm run e2e:images
 npm run e2e
+# first time or after Dockerfile changes:
+npm run e2e:rebuild
 npm run format
 npx nx affected -t lint,test,build --base=main
 npm run pushup
