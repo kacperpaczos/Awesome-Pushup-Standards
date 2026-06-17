@@ -1,18 +1,15 @@
 import { createServer, type Server } from 'node:http';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import {
-  assertAllAuditsMinScore,
-  assertNoSkippedRequired,
+  assertBadFixtureContract,
+  assertGoodFixtureContract,
   cleanupE2eFixtureReports,
-  getPluginReport,
-  PLUGIN_CONTRACTS,
-  runCollectInContainer,
+  fixtureRootForPlugin,
+  runPluginContractCollect,
 } from '@awesome-pushup/e2e-utils';
 
-const PLUGIN = 'llm-review';
-const FIXTURE = 'e2e/plugin-llm-review-e2e/mocks/fixtures';
-const CONTRACT = PLUGIN_CONTRACTS[PLUGIN];
-const IMAGE = CONTRACT.image;
+const PLUGIN = 'llm-review' as const;
+const FIXTURE = fixtureRootForPlugin(PLUGIN);
 
 describe('llm-review e2e', () => {
   let server: Server;
@@ -58,35 +55,24 @@ describe('llm-review e2e', () => {
   });
 
   it('good fixture returns LLM scores', async () => {
-    const { code, report } = await runCollectInContainer({
-      fixtureRelPath: `${FIXTURE}/good`,
-      image: IMAGE,
+    const { code, report } = await runPluginContractCollect({
+      pluginSlug: PLUGIN,
+      variant: 'good',
       env: { PUSHUP_LLM_ENDPOINT: endpoint, PUSHUP_LLM_MODEL: 'mock' },
     });
     expect(code).toBe(0);
-    assertNoSkippedRequired(report, PLUGIN, CONTRACT.good.requiredAudits);
-    assertAllAuditsMinScore(report, PLUGIN, CONTRACT.good.minScore, {
-      skipInformational: true,
-      skipUnavailable: true,
-      excludeSlugs: CONTRACT.good.excludeSlugs,
-    });
+    assertGoodFixtureContract(report, PLUGIN);
   });
 
   it('bad fixture skips without endpoint', async () => {
     const prev = process.env.PUSHUP_LLM_ENDPOINT;
     delete process.env.PUSHUP_LLM_ENDPOINT;
-    const { code, report } = await runCollectInContainer({
-      fixtureRelPath: `${FIXTURE}/bad`,
-      image: IMAGE,
+    const { code, report } = await runPluginContractCollect({
+      pluginSlug: PLUGIN,
+      variant: 'bad',
     });
     if (prev) process.env.PUSHUP_LLM_ENDPOINT = prev;
     expect(code).toBe(0);
-    if (CONTRACT.bad.mode !== 'all-skipped') {
-      throw new Error(`Unexpected bad contract mode for ${PLUGIN}`);
-    }
-    const plugin = getPluginReport(report, PLUGIN);
-    expect(
-      plugin.audits.every((a) => (a.displayValue ?? '').toLowerCase().includes('skipped')),
-    ).toBe(true);
+    assertBadFixtureContract(report, PLUGIN);
   });
 });
