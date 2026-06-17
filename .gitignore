@@ -6,3 +6,9 @@ coverage/
 .DS_Store
 .nx/
 .pytest_cache/
+__pycache__/
+*.py[cod]
+.coverage
+e2e/**/logs/**
+!e2e/**/logs/.gitignore
+!e2e/**/logs/**/.gitignore
