@@ -5,13 +5,12 @@
  *
  * Run: npm run docs:sync
  */
+import { execSync } from 'node:child_process';
 import { mkdir, readdir, readFile, writeFile, rm } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  OFFICIAL_PLUGIN_LABELS,
-  PLUGIN_CATALOG_META,
-} from './plugin-catalog-meta.mjs';
+import { GENERATED_DOC_PATHS } from './docs-generated-paths.mjs';
+import { OFFICIAL_PLUGIN_LABELS, PLUGIN_CATALOG_META } from './plugin-catalog-meta.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const docsRoot = join(repoRoot, 'apps/docs');
@@ -19,8 +18,7 @@ const contentRoot = join(docsRoot, 'src/content/docs');
 const pluginsOut = join(contentRoot, 'plugins');
 const presetsOut = join(contentRoot, 'presets');
 
-const GITHUB =
-  'https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main';
+const GITHUB = 'https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main';
 
 /** @type {Record<string, string>} */
 const PLUGIN_DOMAINS = {
@@ -224,7 +222,7 @@ function renderRegistryMarkdown(registry) {
     '- **Run** `npm run docs:sync` (or `npm run docs:build`) to refresh Starlight pages.',
     '- **Published via** `both` = npm/GitHub package README + CI docs artifact (Starlight build).',
     '- New plugins must add a row here via sync and an entry in `doc-registry.json` domain map in `scripts/sync-docs-to-starlight.mjs`.',
-    '- **Future (Deferred):** extend `docs-quality` plugin with audits that verify docs are generated and collected — `doc-registry.json` entry, Starlight page exists, README/sync consistency. See [Backlog — docs-quality audyty sync wiki](/project/backlog/#deferred--odroczone).',
+    '- **Future (Deferred):** extend `docs-quality` plugin with audits that verify docs are generated and collected — `doc-registry.json` entry, Starlight page exists, README/sync consistency. See [Backlog — docs-quality wiki sync](/project/backlog/#deferred).',
     '',
   );
 
@@ -345,10 +343,7 @@ async function buildCatalogData(pluginEntries, presetEntries) {
 async function renderPluginsCatalogMarkdown(pluginEntries, presetEntries) {
   const introPath = join(repoRoot, 'scripts/plugins-catalog.intro.md');
   const intro = await readFile(introPath, 'utf8');
-  const { pluginAudits, presetComposition } = await buildCatalogData(
-    pluginEntries,
-    presetEntries,
-  );
+  const { pluginAudits, presetComposition } = await buildCatalogData(pluginEntries, presetEntries);
 
   const lines = [
     '---',
@@ -377,9 +372,7 @@ async function renderPluginsCatalogMarkdown(pluginEntries, presetEntries) {
   for (const entry of sortedPlugins) {
     const meta = PLUGIN_CATALOG_META[entry.slug] ?? {
       kind: 'heuristic',
-      detects: extractDescription(
-        await readFile(join(repoRoot, entry.packageReadme), 'utf8'),
-      ),
+      detects: extractDescription(await readFile(join(repoRoot, entry.packageReadme), 'utf8')),
       externalTools: [],
       configOptions: {},
     };
@@ -403,9 +396,7 @@ async function renderPluginsCatalogMarkdown(pluginEntries, presetEntries) {
     for (const audit of pluginAudits.get(slug) ?? []) {
       const suggest = meta.suggests[audit.slug];
       if (!suggest) {
-        lines.push(
-          `| \`${audit.slug}\` | — | — | — |`,
-        );
+        lines.push(`| \`${audit.slug}\` | — | — | — |`);
         continue;
       }
       lines.push(
@@ -441,10 +432,7 @@ async function renderPluginsCatalogMarkdown(pluginEntries, presetEntries) {
       }
       lines.push(`- **Configuration:** ${formatConfigOptions(meta.configOptions)}`);
       if (audits.length > 0) {
-        lines.push(
-          '- **Audits:**',
-          ...audits.map((a) => `  - \`${a.slug}\` — ${a.title}`),
-        );
+        lines.push('- **Audits:**', ...audits.map((a) => `  - \`${a.slug}\` — ${a.title}`));
       }
       lines.push('');
     }
@@ -461,9 +449,7 @@ async function renderPluginsCatalogMarkdown(pluginEntries, presetEntries) {
       awesome: [],
       official: [],
     };
-    const awesomeLinks = awesome
-      .map((s) => `[\`${s}\`](/plugins/${s}/)`)
-      .join(', ');
+    const awesomeLinks = awesome.map((s) => `[\`${s}\`](/plugins/${s}/)`).join(', ');
     lines.push(
       `| [\`${entry.slug}\`](/presets/${entry.slug}/) | ${entry.domain} | ${awesomeLinks || '—'} | ${official.join(', ') || '—'} |`,
     );
@@ -492,9 +478,7 @@ async function main() {
 
   const registry = {
     generatedAt: new Date().toISOString(),
-    entries: [...pluginEntries, ...presetEntries].sort((a, b) =>
-      a.slug.localeCompare(b.slug),
-    ),
+    entries: [...pluginEntries, ...presetEntries].sort((a, b) => a.slug.localeCompare(b.slug)),
   };
 
   await writeFile(
@@ -521,9 +505,18 @@ async function main() {
     'utf8',
   );
 
+  formatGeneratedDocs();
+
   console.info(
     `docs:sync — ${pluginEntries.length} plugins, ${presetEntries.length} presets → Starlight + plugins catalog`,
   );
+}
+
+function formatGeneratedDocs() {
+  execSync(`npx prettier --write ${GENERATED_DOC_PATHS.join(' ')}`, {
+    cwd: repoRoot,
+    stdio: 'inherit',
+  });
 }
 
 main().catch((error) => {

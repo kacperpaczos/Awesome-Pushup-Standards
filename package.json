@@ -25,6 +25,7 @@
     "version-packages": "changeset version",
     "release": "changeset publish",
     "docs:sync": "node scripts/sync-docs-to-starlight.mjs",
+    "docs:verify": "node scripts/verify-docs-sync.mjs",
     "docs:dev": "npm run docs:sync && npm run dev -w docs",
     "docs:build": "npm run docs:sync && npm run build -w docs",
     "docs:preview": "npm run preview -w docs"

@@ -11,6 +11,12 @@ __pycache__/
 .coverage
 coverage.json
 target/
+.mypy_cache/
+.ruff_cache/
+.env
+*.log
 e2e/**/logs/**
 !e2e/**/logs/.gitignore
 !e2e/**/logs/**/.gitignore
+apps/docs/.astro/
+apps/docs/dist/
