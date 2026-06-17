@@ -87,6 +87,20 @@ jobs:
       - run: npm ci
       - run: npx nx affected -t build --parallel=3
 
+  docs:
+    runs-on: ubuntu-latest
+    name: Documentation site
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run docs:build
+
   int-test:
     runs-on: ubuntu-latest
     name: Integration tests
@@ -103,6 +117,33 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx nx run awesome-pushup-standards:int-test
+
+  e2e:
+    runs-on: ubuntu-latest
+    name: E2E per plugin
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run e2e:all
+      - name: Upload E2E logs and reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-logs-and-reports
+          path: |
+            e2e/logs/latest.log
+            e2e/logs/index.json
+            e2e/plugin-*-e2e/logs/**
+          if-no-files-found: warn
 
   pkg-pr-new:
     runs-on: ubuntu-latest
