@@ -283,23 +283,25 @@ Każdy plugin w `packages/plugins/<slug>/` zawiera: `package.json` (scoped name 
 - **Faza 3 — C++/Qt/GTK**: `cpp-quality`, `qt-quality`, `gtk-style`, presety `cpp-qt-desktop` i `gtk-desktop`.
 - **Faza 4 — Domeny przekrojowe**: `architecture-rules`, `api-openapi`, `react-standards`, `docker-quality`, `error-logging`, `cicd-quality`.
 - **Faza 5 — LLM**: `llm-review`, `llm-configuration.md`, rubryki, structured output, cache.
-- **Faza 5b — CI/CD monorepo** (Done): Nx-lite, shift-left (husky, commitlint, prettier), 10 workflowów GitHub Actions, pluginy `contributor-hygiene` i `release-quality`, rozszerzony `cicd-quality`, preset `monorepo-ci-strict`, [docs/monorepo-ci.md](docs/monorepo-ci.md).
-- **Faza 6 — Publikacja** (w toku): initial commit, push GitHub, changeset initial release, npm OIDC trusted publisher, environment `release`, pierwszy zielony CI. Checklist: [docs/monorepo-ci.md#faza-publikacji](docs/monorepo-ci.md#faza-publikacji).
+- **Faza 5b — CI/CD monorepo** (Done): Nx-lite, shift-left (husky, commitlint, prettier), 10 workflowów GitHub Actions, pluginy `contributor-hygiene` i `release-quality`, rozszerzony `cicd-quality`, preset `monorepo-ci-strict`, [Monorepo CI/CD](apps/docs/src/content/docs/project/monorepo-ci.md).
+- **Faza 6 — Publikacja** (Done w repo, npm odroczone): initial commit, push GitHub, changeset initial release (`0.1.0`), environment `release`, zielony CI. **Publikacja paczek na npm jest poza zakresem** — bez Trusted Publisher / OIDC. Checklist: [Monorepo CI — publication phase](apps/docs/src/content/docs/project/monorepo-ci.md#faza-publikacji).
+- **Faza 7 — E2E per plugin** (implementacja **Done**, weryfikacja **Pending**): 19 projektów `e2e/plugin-*-e2e`, Docker collect, job `e2e` w CI — wdrożone w repo; pełna weryfikacja lokalna + GitHub Actions: [Backlog — pending](apps/docs/src/content/docs/project/backlog.md#pending--najbliższe-kroki). Dokumentacja: [E2E testing](apps/docs/src/content/docs/guides/e2e-testing.md).
 
 ```mermaid
 flowchart LR
   subgraph done [Done]
     F0[Faza 0-5]
     F5b[Faza 5b CI/CD]
+    F6[Faza 6 repo release]
+    F7impl[Faza 7 implementacja E2E]
   end
 
-  subgraph active [Faza 6]
-    Git[git push]
-    CI[GitHub Actions]
-    NPM[npm OIDC publish]
+  subgraph pending [Pending]
+    F7verify[Weryfikacja E2E Docker]
+    CIe2e[CI e2e job green]
   end
 
-  done --> active
+  done --> pending
 ```
 
 > Jesteś agentem kodującym. Zbootstrapuj repozytorium `awesome-pushup-standards` krok po kroku. Wykonuj polecenia w kolejności, twórz pliki o podanej treści. Identyfikatory, nazwy narzędzi i komendy pozostają po angielsku.

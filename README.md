@@ -15,7 +15,7 @@ Curated plugins and presets for [code-pushup](https://github.com/code-pushup/cli
 
 Languages (Python, Rust, JS/TS, C++), architecture, API design, React, validation, error handling, code quality, security, Docker, documentation, CI/CD, and optional LLM review.
 
-See [docs/domains.md](docs/domains.md) for implementation status.
+See [Domains](apps/docs/src/content/docs/reference/domains.md) for implementation status.
 
 ## Install
 
@@ -89,6 +89,16 @@ npx code-pushup collect
 | `gtk-desktop`           | GTK/GNOME desktop apps                  |
 | `monorepo-ci-strict`    | Monorepo CI/CD + shift-left (this repo) |
 
+## Testing pyramid
+
+| Layer | Command            | Scope                                     |
+| ----- | ------------------ | ----------------------------------------- |
+| Unit  | `npm run test:all` | 19 plugins, min. 2 cases each             |
+| E2E   | `npm run e2e`      | 19× Docker collect (sequential, ~2–4 min) |
+| Smoke | `npm run pushup`   | Full `monorepo-ci-strict` preset          |
+
+Full walkthrough (all layers): [E2E testing — all 19 plugins](apps/docs/src/content/docs/guides/e2e-testing.md#running-tests-for-all-19-plugins) · [Troubleshooting hangs](apps/docs/src/content/docs/guides/e2e-testing.md#troubleshooting) · local preview: `npm run docs:dev`.
+
 ## CI/CD architecture
 
 GitHub Actions follow [code-pushup/cli](https://github.com/code-pushup/cli) patterns:
@@ -96,7 +106,7 @@ GitHub Actions follow [code-pushup/cli](https://github.com/code-pushup/cli) patt
 - **Nx affected** — lint, test, build only changed packages
 - **Multi-OS matrix** — ubuntu, windows, macos
 - **Fork-safe** — separate `code-pushup-fork.yml` for untrusted PRs
-- **OIDC publish** — npm trusted publishing on release tags (no `NPM_TOKEN`)
+- **Repo versioning** — changesets + tags in GitHub (npm publish disabled)
 - **Shift-left** — husky, commitlint, prettier, knip locally
 
 Optional secrets: `NX_CLOUD_ACCESS_TOKEN`, `CODECOV_TOKEN`, `CP_API_KEY`.
@@ -113,43 +123,44 @@ flowchart LR
 
   subgraph cd [Release CD]
     F[release.yml changesets]
-    G[publish.yml OIDC tag]
+    G[tags in repo]
   end
 
   pr --> cd
 ```
 
-Full architecture, audit mapping, and **TODO roadmap**: [docs/monorepo-ci.md](docs/monorepo-ci.md).
+Full architecture, audit mapping, and open items: [Backlog](apps/docs/src/content/docs/project/backlog.md) (operational) · [Monorepo CI/CD](apps/docs/src/content/docs/project/monorepo-ci.md) (CI details).
 
-### TODO — deferred (to consider)
+### Open items (backlog)
 
-| Item                                | Status      | Notes                                                      |
-| ----------------------------------- | ----------- | ---------------------------------------------------------- |
-| GitHub App bot for release commits  | Deferred    | Requires org App setup (`GH_APP_ID`, `GH_APP_PRIVATE_KEY`) |
-| Full SHA pinning for GitHub Actions | Deferred    | Currently `@v4` tags; supply-chain hardening planned       |
-| Codecov matrix per package          | Deferred    | Needs `vitest --coverage` + `coverage.yml`                 |
-| Nx Release instead of Changesets    | Deferred    | Migrate after conventional commits stabilize               |
-| Nx Cloud remote cache               | Optional    | Enable with `NX_CLOUD_ACCESS_TOKEN`                        |
-| E2E Nx target for examples          | Placeholder | After full demo scenarios exist                            |
+See **[Backlog](apps/docs/src/content/docs/project/backlog.md)** for Pending, Deferred, and Cancelled items. Quick view:
 
-See [docs/monorepo-ci.md#todo--do-rozwazenia](docs/monorepo-ci.md#todo--do-rozwazenia) for details and diagrams.
+| Item                                                       | Status        |
+| ---------------------------------------------------------- | ------------- |
+| E2E Docker verification (19 plugins + CI)                  | **Pending**   |
+| GitHub App bot, SHA pinning, Codecov, Nx Release, Nx Cloud | **Deferred**  |
+| npm publish                                                | **Cancelled** |
 
 ## Getting started for maintainers
 
 1. Clone with submodules: `git clone --recurse-submodules <repo-url>`
 2. Install and verify: `npm ci && npm run build && npm test && npm run pushup`
-3. First-time publish checklist: [docs/monorepo-ci.md#faza-publikacji](docs/monorepo-ci.md#faza-publikacji)
+3. First-time publish checklist: [Monorepo CI — publication phase](apps/docs/src/content/docs/project/monorepo-ci.md#faza-publikacji)
 4. Optional GitHub secrets: `NX_CLOUD_ACCESS_TOKEN`, `CP_API_KEY`, `CODECOV_TOKEN`
-5. npm release requires **Trusted Publisher** (OIDC) + GitHub environment **`release`**
+5. Version tags document releases in-repo — npm publish is out of scope
 6. Contributors: fork → PR (fork PRs use `code-pushup-fork.yml` without secrets)
 
 ## Development
+
+Open / deferred work: **[Backlog](apps/docs/src/content/docs/project/backlog.md)**.
 
 ```bash
 git submodule update --init --recursive
 npm ci
 npm run build
 npm run test:all
+npm run e2e:build-images
+npm run e2e
 npm run format
 npx nx affected -t lint,test,build --base=main
 npm run pushup
@@ -162,11 +173,15 @@ Reference repos (submodules):
 
 ## Documentation
 
-- [Plugin authoring](docs/plugin-authoring.md)
-- [Scoring model](docs/scoring-model.md)
-- [Domains](docs/domains.md)
-- [Monorepo CI/CD](docs/monorepo-ci.md)
-- [LLM configuration](docs/llm-configuration.md)
+Built with [Starlight](https://starlight.astro.build/). Local preview: `npm run docs:dev` → [http://localhost:4321](http://localhost:4321).
+
+- [Plugin authoring](apps/docs/src/content/docs/guides/plugin-authoring.md)
+- [Scoring model](apps/docs/src/content/docs/reference/scoring-model.md)
+- [Domains](apps/docs/src/content/docs/reference/domains.md)
+- [Backlog / open items](apps/docs/src/content/docs/project/backlog.md)
+- [Monorepo CI/CD](apps/docs/src/content/docs/project/monorepo-ci.md)
+- [E2E testing](apps/docs/src/content/docs/guides/e2e-testing.md)
+- [LLM configuration](apps/docs/src/content/docs/guides/llm-configuration.md)
 
 ## Contributing
 
