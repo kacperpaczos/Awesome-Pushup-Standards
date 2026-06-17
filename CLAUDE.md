@@ -30,6 +30,7 @@ npm run e2e -- python-quality    # single plugin
 
 # Docs site (Starlight / Astro)
 npm run docs:sync                # sync package READMEs → Starlight + rebuild registry
+npm run docs:verify              # sync + assert generated docs match git
 npm run docs:dev                 # sync + dev server at http://localhost:4321
 npm run docs:build               # sync + static build
 
@@ -78,7 +79,7 @@ Every plugin exports a default `create(options?)` function returning a `PluginCo
 Two patterns:
 
 1. **Heuristic** — reads project files, returns binary scores (0/1) for presence/absence checks.
-2. **Wrapper** — shells out to an external CLI (`spectral`, `ruff`, `cargo clippy`, …). Must gracefully skip (score=1, displayValue containing `"skipped"`) when the tool is not installed.
+2. **Wrapper** — shells out to an external CLI (`spectral`, `ruff`, `cargo clippy`, …). Missing-tool behavior depends on `rigor` — see [audit contracts](apps/docs/src/content/docs/reference/audit-contracts.md).
 
 Audit slug rules: `/^[a-z\d]+(?:-[a-z\d]+)*$/`, max 128 chars, English kebab-case only.
 
@@ -104,7 +105,9 @@ Each `e2e/plugin-<slug>-e2e/tests/collect.e2e.test.ts` calls `createStandardPlug
 
 Package READMEs (`packages/*/README.md`) are the source of truth for usage docs. `npm run docs:sync` copies them into `apps/docs/src/content/docs/plugins/` and `…/presets/`, regenerates `doc-registry.json`, `sidebar.generated.mjs`, and `reference/documentation-registry.md`.
 
-When adding a new plugin/preset, register its domain mapping in `scripts/sync-docs-to-starlight.mjs` under `PLUGIN_DOMAINS` or `PRESET_DOMAINS`, then run `npm run docs:sync`.
+When adding a new plugin/preset, register its domain mapping in `scripts/sync-docs-to-starlight.mjs` under `PLUGIN_DOMAINS` or `PRESET_DOMAINS`, then run `npm run docs:verify`.
+
+Project context: [vision](apps/docs/src/content/docs/project/vision.md), [backlog](apps/docs/src/content/docs/project/backlog.md). AI agent pointers: [AGENTS.md](AGENTS.md).
 
 ## Adding a new plugin checklist
 
@@ -118,6 +121,6 @@ When adding a new plugin/preset, register its domain mapping in `scripts/sync-do
 
 ## Release & CI
 
-- CI (`ci.yml`) runs: format → lint → unit-test (Linux/Windows/macOS) → build → docs → e2e → pkg-pr-new.
+- CI (`ci.yml`) runs: format → lint → unit-test (Linux/Windows/macOS) → build → docs (verify + build + link check) → e2e → pkg-pr-new.
 - Same-repo PRs can upload code-pushup reports when `CP_API_KEY` is set. Fork PRs use `code-pushup-fork.yml` (no secrets).
 - Releases use Changesets: `npm run version-packages` then `npm run release`.

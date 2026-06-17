@@ -24,7 +24,7 @@ Every new plugin or preset must meet:
 
 1. Fork and branch from `main`.
 2. Implement with tests.
-3. Open PR — CI runs format, lint, affected test/build, e2e (Docker), docs build, and code-pushup.
+3. Open PR — CI runs format, lint, affected test/build, e2e (Docker), docs verify/build/link check, and code-pushup.
 4. Add a changeset describing the change.
 5. Review and merge.
 
@@ -52,11 +52,11 @@ npx nx run-many -t lint,test,build
 
 External contributors should **fork** the repository and open PRs from their fork. Fork PRs run `code-pushup-fork.yml` (`pull_request_target`) without access to repository secrets. Same-repo PRs use `code-pushup.yml` and may upload reports when `CP_API_KEY` is configured.
 
-See [Monorepo CI/CD](/project/monorepo-ci/) for CI architecture and the [publication checklist](/project/monorepo-ci/#faza-publikacji).
+See [Monorepo CI/CD](/project/monorepo-ci/) for CI architecture and the [publication checklist](/project/monorepo-ci/#publication-phase).
 
 ## Maintaining GitHub Actions pins (TODO)
 
-Action references currently use version tags (`@v4`). Full commit SHA pinning is **deferred** — see [Monorepo CI — SHA pinning](/project/monorepo-ci/#2-pełne-pinowanie-sha-akcji-github).
+Action references currently use version tags (`@v4`). Full commit SHA pinning is **deferred** — see [Monorepo CI — SHA pinning](/project/monorepo-ci/#2-full-sha-pinning).
 
 ## Reference implementations
 
@@ -72,4 +72,5 @@ Breaking changes to category weights or refs require a **major** version bump vi
 
 - Edit plugin/preset usage in `packages/*/README.md`.
 - Edit guides and project docs in `apps/docs/src/content/docs/`.
-- Run `npm run docs:sync` before committing doc changes (or rely on `docs:build` in CI).
+- After editing `packages/*/README.md`, run `npm run docs:sync` (or `npm run docs:verify` to sync and confirm git is clean).
+- CI runs `docs:verify` before building the documentation site, then checks links in `apps/docs/dist/` via [lychee](https://github.com/lycheeverse/lychee) in the `docs` CI job.

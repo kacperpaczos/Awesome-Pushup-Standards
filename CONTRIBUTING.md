@@ -20,7 +20,7 @@ Every new plugin or preset must meet:
 
 1. Fork and branch from `main`.
 2. Implement with tests.
-3. Open PR — CI runs format, lint, affected test/build, e2e (Docker), and code-pushup.
+3. Open PR — CI runs format, lint, affected test/build, e2e (Docker), and code-pushup. Docs job runs `docs:verify`, site build, and link check.
 4. Add a changeset describing the change.
 5. Review and merge.
 
@@ -48,11 +48,11 @@ npx nx run-many -t lint,test,build
 
 External contributors should **fork** the repository and open PRs from their fork. Fork PRs run `code-pushup-fork.yml` (`pull_request_target`) without access to repository secrets. Same-repo PRs use `code-pushup.yml` and may upload reports when `CP_API_KEY` is configured.
 
-See [Monorepo CI/CD](apps/docs/src/content/docs/project/monorepo-ci.md) for CI architecture and the [publication checklist](apps/docs/src/content/docs/project/monorepo-ci.md#faza-publikacji).
+See [Monorepo CI/CD](apps/docs/src/content/docs/project/monorepo-ci.md) for CI architecture and the [publication checklist](apps/docs/src/content/docs/project/monorepo-ci.md#publication-phase).
 
 ## Maintaining GitHub Actions pins (TODO)
 
-Action references currently use version tags (`@v4`). Full commit SHA pinning is **deferred** — see [Monorepo CI — SHA pinning](apps/docs/src/content/docs/project/monorepo-ci.md#2-pelne-pinowanie-sha-akcji-github).
+Action references currently use version tags (`@v4`). Full commit SHA pinning is **deferred** — see [Monorepo CI — SHA pinning](apps/docs/src/content/docs/project/monorepo-ci.md#2-full-sha-pinning).
 
 When implementing SHA pins:
 
