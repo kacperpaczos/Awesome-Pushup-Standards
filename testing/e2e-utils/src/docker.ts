@@ -26,3 +26,20 @@ export const E2E_IMAGES = {
 } as const;
 
 export type E2eImage = (typeof E2E_IMAGES)[keyof typeof E2E_IMAGES];
+
+/** Docker resets PATH for --user; include toolchain locations explicitly. */
+export const E2E_DOCKER_PATH =
+  '/usr/local/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin';
+
+const E2E_TOOL_CACHE_DIR = '/tmp/e2e-tool-cache';
+
+export function dockerRuntimeEnv(extra: Record<string, string> = {}): Record<string, string> {
+  return {
+    PATH: E2E_DOCKER_PATH,
+    CARGO_HOME: '/usr/local/cargo',
+    RUSTUP_HOME: '/usr/local/rustup',
+    RUFF_CACHE_DIR: E2E_TOOL_CACHE_DIR,
+    MYPY_CACHE_DIR: E2E_TOOL_CACHE_DIR,
+    ...extra,
+  };
+}

@@ -1,7 +1,33 @@
 import type { E2eImage } from './docker.js';
+import type { ToolPreflightSpec } from './tool-preflight.js';
+
+const NO_TOOLS: ToolPreflightSpec[] = [];
+const SPECTRAL_TOOL: ToolPreflightSpec = {
+  name: 'spectral',
+  command: 'spectral',
+  args: ['--version'],
+};
+const PYTHON_TOOLS: ToolPreflightSpec[] = [
+  { name: 'ruff', command: 'ruff', args: ['--version'] },
+  { name: 'mypy', command: 'mypy', args: ['--version'] },
+  { name: 'bandit', command: 'bandit', args: ['--version'] },
+  { name: 'pytest', command: 'pytest', args: ['--version'] },
+];
+const RUST_TOOLS: ToolPreflightSpec[] = [
+  { name: 'cargo', command: 'cargo', args: ['--version'] },
+  { name: 'clippy', command: 'cargo', args: ['clippy', '--version'] },
+  { name: 'rustfmt', command: 'rustfmt', args: ['--version'] },
+];
+const CPP_TOOLS: ToolPreflightSpec[] = [
+  { name: 'clang-tidy', command: 'clang-tidy', args: ['--version'] },
+  { name: 'cppcheck', command: 'cppcheck', args: ['--version'] },
+  { name: 'clang-format', command: 'clang-format', args: ['--version'] },
+  { name: 'clazy', command: 'clazy', args: ['--version'] },
+];
 
 export type PluginContract = {
   image: E2eImage;
+  tools: ToolPreflightSpec[];
   good: {
     minScore: number;
     requiredAudits: string[];
@@ -20,6 +46,7 @@ export type PluginContract = {
 export const PLUGIN_CONTRACTS = {
   'api-openapi': {
     image: 'e2e-node:20',
+    tools: [SPECTRAL_TOOL],
     good: {
       minScore: 0.9,
       requiredAudits: ['has-openapi-spec', 'spectral-violations', 'api-versioning', 'schema-first'],
@@ -29,6 +56,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'architecture-rules': {
     image: 'e2e-node:20',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: [
@@ -43,6 +71,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'cicd-quality': {
     image: 'e2e-node:20',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: [
@@ -62,6 +91,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'contributor-hygiene': {
     image: 'e2e-node:20',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: [
@@ -79,6 +109,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'cpp-quality': {
     image: 'e2e-cpp:qt',
+    tools: CPP_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: ['clang-tidy-warnings', 'cppcheck-issues', 'format-violations'],
@@ -88,6 +119,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'docker-quality': {
     image: 'e2e-node:20',
+    tools: [{ name: 'hadolint', command: 'hadolint', args: ['--version'] }],
     good: {
       minScore: 0.9,
       requiredAudits: ['hadolint-violations', 'multi-stage-build'],
@@ -97,6 +129,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'docs-quality': {
     image: 'e2e-node:20',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: ['readme-completeness', 'has-changelog', 'has-license', 'has-contributing'],
@@ -106,6 +139,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'error-logging': {
     image: 'e2e-node:20',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: ['bare-except', 'structured-logging', 'no-print-debug'],
@@ -115,6 +149,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'gtk-style': {
     image: 'e2e-gtk:c',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: ['gobject-macros', 'style-consistency'],
@@ -124,6 +159,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'llm-review': {
     image: 'e2e-node:20',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: [
@@ -139,6 +175,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'python-quality': {
     image: 'e2e-python:3.12',
+    tools: PYTHON_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: ['ruff-lint', 'type-errors', 'bandit-findings'],
@@ -148,6 +185,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'python-stack-detector': {
     image: 'e2e-python:3.12',
+    tools: PYTHON_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: ['has-pydantic', 'has-type-checker', 'has-ruff', 'has-security-tooling'],
@@ -157,6 +195,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'qt-quality': {
     image: 'e2e-cpp:qt',
+    tools: [{ name: 'clazy', command: 'clazy', args: ['--version'] }],
     good: {
       minScore: 0.9,
       requiredAudits: ['clazy-warnings', 'qt-api-misuse'],
@@ -166,6 +205,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'react-standards': {
     image: 'e2e-node:20',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: [
@@ -180,6 +220,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'release-quality': {
     image: 'e2e-node:20',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: [
@@ -196,6 +237,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'rust-modules': {
     image: 'e2e-rust:1.83',
+    tools: [{ name: 'cargo', command: 'cargo', args: ['--version'] }],
     good: {
       minScore: 0.9,
       requiredAudits: ['module-cycles', 'banned-dependencies'],
@@ -205,6 +247,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'rust-quality': {
     image: 'e2e-rust:1.83',
+    tools: RUST_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: ['clippy-warnings', 'format-check'],
@@ -214,6 +257,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'security-sast': {
     image: 'e2e-security',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: ['secrets-detected', 'sast-findings'],
@@ -223,6 +267,7 @@ export const PLUGIN_CONTRACTS = {
   },
   'ts-stack-detector': {
     image: 'e2e-node:20',
+    tools: NO_TOOLS,
     good: {
       minScore: 0.9,
       requiredAudits: ['suggest-typescript', 'suggest-zod', 'suggest-eslint'],

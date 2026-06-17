@@ -11,14 +11,22 @@ import {
 import { dockerUserFlag } from './docker-user.js';
 import { fixtureLogDir } from './fixture-log-dir.js';
 import { findRepoRoot } from './find-repo-root.js';
-import { isDockerAvailable, type E2eImage } from './docker.js';
+import { isDockerAvailable, dockerRuntimeEnv, type E2eImage } from './docker.js';
+import { runDockerShellCommand } from './docker-run.js';
 import { readReport, reportPathForLogDir } from './report.js';
+import { PLUGIN_CONTRACTS, type PluginSlug } from './plugin-contracts.js';
+import {
+  assertToolPreflightOk,
+  runToolPreflightInContainer,
+  type ToolPreflightResult,
+} from './tool-preflight.js';
 
 const DEFAULT_DOCKER_TIMEOUT_MS = 180_000;
 
 export type RunCollectOptions = {
   fixtureRelPath: string;
   image: E2eImage;
+  pluginSlug?: PluginSlug;
   repoRoot?: string;
   env?: Record<string, string>;
 };
@@ -66,16 +74,18 @@ export async function runCollectInContainer(options: RunCollectOptions) {
   const llmEnv = options.env ?? {};
   const dockerHome = dockerUserFlag() ? { HOME: '/tmp' } : {};
   const envPairs = Object.entries({
-    NPM_CONFIG_CACHE: npmCache,
-    CP_PERSIST_OUTPUT_DIR: persistOutputDir,
-    ...dockerHome,
-    ...llmEnv,
-    ...(process.env.PUSHUP_LLM_ENDPOINT
-      ? {
-          PUSHUP_LLM_ENDPOINT: process.env.PUSHUP_LLM_ENDPOINT,
-          PUSHUP_LLM_MODEL: process.env.PUSHUP_LLM_MODEL ?? 'mock',
-        }
-      : {}),
+    ...dockerRuntimeEnv({
+      NPM_CONFIG_CACHE: npmCache,
+      CP_PERSIST_OUTPUT_DIR: persistOutputDir,
+      ...dockerHome,
+      ...llmEnv,
+      ...(process.env.PUSHUP_LLM_ENDPOINT
+        ? {
+            PUSHUP_LLM_ENDPOINT: process.env.PUSHUP_LLM_ENDPOINT,
+            PUSHUP_LLM_MODEL: process.env.PUSHUP_LLM_MODEL ?? 'mock',
+          }
+        : {}),
+    }),
   });
 
   let code = 1;
@@ -85,6 +95,10 @@ export async function runCollectInContainer(options: RunCollectOptions) {
   let command = '';
   let report: Report = emptyReport();
   let collectError: unknown;
+  let toolPreflight: ToolPreflightResult[] = [];
+
+  const contractTools =
+    options.pluginSlug !== undefined ? PLUGIN_CONTRACTS[options.pluginSlug].tools : [];
 
   const capture = {
     onStdout: (chunk: string) => {
@@ -96,36 +110,41 @@ export async function runCollectInContainer(options: RunCollectOptions) {
   };
 
   try {
+    if (useDocker && contractTools.length > 0) {
+      toolPreflight = await runToolPreflightInContainer({
+        fixtureAbs,
+        image: options.image,
+        tools: contractTools,
+        repoRoot,
+        env: llmEnv,
+        timeoutMs: dockerTimeoutMs(),
+      });
+      assertToolPreflightOk(toolPreflight, {
+        fixtureRelPath: options.fixtureRelPath,
+        image: options.image,
+      });
+    }
+
     if (useDocker) {
       const collectCmd = ['npx', ...collectArgs(verbose, persistOutputDir)].join(' ');
-      const shellCmd = `git config --global --add safe.directory ${JSON.stringify(repoRoot)} && ${collectCmd}`;
-      const envFlags = envPairs
-        .map(([key, value]) => `-e ${key}=${JSON.stringify(value)}`)
-        .join(' ');
-      command = [
-        'docker run --rm',
-        dockerUserFlag(),
-        `-v ${JSON.stringify(`${repoRoot}:${repoRoot}`)}`,
-        `-w ${JSON.stringify(fixtureAbs)}`,
-        '--network host',
-        envFlags,
-        options.image,
-        `bash -lc ${JSON.stringify(shellCmd)}`,
-      ]
-        .filter(Boolean)
-        .join(' ');
-
-      const result = await executeProcess({
-        command,
-        cwd: repoRoot,
-        timeout: dockerTimeoutMs(),
-        silent: true,
-        observer: capture,
+      const shellCmd = [
+        `git config --global --add safe.directory ${JSON.stringify(repoRoot)}`,
+        collectCmd,
+      ].join(' && ');
+      const dockerEnv = Object.fromEntries(envPairs);
+      const dockerResult = await runDockerShellCommand({
+        image: options.image,
+        fixtureAbs,
+        repoRoot,
+        env: dockerEnv,
+        shellCmd,
+        timeoutMs: dockerTimeoutMs(),
       });
-      code = result.code ?? 1;
-      signal = result.signal;
-      stdout = result.stdout || stdout;
-      stderr = result.stderr || stderr;
+      command = dockerResult.command;
+      code = dockerResult.code ?? 1;
+      signal = dockerResult.signal;
+      stdout = dockerResult.stdout || stdout;
+      stderr = dockerResult.stderr || stderr;
     } else {
       command = ['npx', ...collectArgs(verbose, persistOutputDir)].join(' ');
       const result = await executeProcess({
@@ -177,10 +196,17 @@ export async function runCollectInContainer(options: RunCollectOptions) {
       stderr,
       reportPath,
       report,
+      toolPreflight,
     });
   }
 
   if (collectError instanceof ProcessError && collectError.signal === 'SIGTERM') {
+    throw new Error(
+      `Docker collect timed out after ${dockerTimeoutMs()}ms for ${options.fixtureRelPath} (${options.image})`,
+      { cause: collectError },
+    );
+  }
+  if (collectError instanceof Error && collectError.message.includes('Docker command timed out')) {
     throw new Error(
       `Docker collect timed out after ${dockerTimeoutMs()}ms for ${options.fixtureRelPath} (${options.image})`,
       { cause: collectError },
@@ -198,5 +224,5 @@ export async function runCollectInContainer(options: RunCollectOptions) {
   });
   report = await readReport(reportPath);
 
-  return { code, report, reportPath, usedDocker: useDocker };
+  return { code, report, reportPath, usedDocker: useDocker, toolPreflight };
 }

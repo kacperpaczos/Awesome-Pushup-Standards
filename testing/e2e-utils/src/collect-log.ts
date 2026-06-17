@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path';
 import type { Report } from '@code-pushup/models';
 import { findRepoRoot } from './find-repo-root.js';
 import { fixtureLogDir } from './fixture-log-dir.js';
+import type { ToolPreflightResult } from './tool-preflight.js';
 
 const DIR_MODE = 0o755;
 const FILE_MODE = 0o644;
@@ -25,6 +26,7 @@ export type CollectLogSection = {
   stderr: string;
   reportPath: string;
   report: Report;
+  toolPreflight?: ToolPreflightResult[];
 };
 
 export function shouldWriteCollectLog(): boolean {
@@ -71,6 +73,18 @@ export async function initCollectLog(repoRoot = findRepoRoot()): Promise<string>
   return logPath;
 }
 
+function formatToolPreflight(results: ToolPreflightResult[] | undefined): string {
+  if (!results?.length) return '';
+  const lines = ['--- tool preflight ---'];
+  for (const tool of results) {
+    lines.push(
+      `  ${tool.name} (${tool.command}): ${tool.status}${tool.path ? ` @ ${tool.path}` : ''}${tool.version ? ` — ${tool.version}` : ''}`,
+    );
+  }
+  lines.push('');
+  return lines.join('\n');
+}
+
 function formatSectionBody(section: CollectLogSection): string {
   const divider = '='.repeat(80);
   return [
@@ -83,6 +97,7 @@ function formatSectionBody(section: CollectLogSection): string {
     `exit code: ${section.exitCode ?? 'null'}${section.signal ? ` (signal ${section.signal})` : ''}`,
     `report: ${section.reportPath}`,
     '',
+    formatToolPreflight(section.toolPreflight),
     '--- command ---',
     section.command,
     '',
@@ -191,6 +206,7 @@ async function writePerFixtureLogs(section: CollectLogSection, repoRoot: string)
         durationMs: section.durationMs,
         command: section.command,
         reportPath: section.reportPath,
+        toolPreflight: section.toolPreflight ?? [],
         artifactFiles: artifacts.map((p) => p.replace(`${repoRoot}/`, '')),
         copiedAt: new Date().toISOString(),
       },
