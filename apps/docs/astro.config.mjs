@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import mermaid from 'astro-mermaid';
 import starlight from '@astrojs/starlight';
+import { pluginSidebarGroups, presetSidebarGroups } from './sidebar.generated.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -26,6 +27,8 @@ export default defineConfig({
 				{
 					label: 'Guides',
 					items: [
+						{ slug: 'guides/getting-started' },
+						{ slug: 'guides/contributing' },
 						{ slug: 'guides/plugin-authoring' },
 						{ slug: 'guides/llm-configuration' },
 						{ slug: 'guides/e2e-testing' },
@@ -35,8 +38,19 @@ export default defineConfig({
 					label: 'Reference',
 					items: [
 						{ slug: 'reference/scoring-model' },
+						{ slug: 'reference/audit-contracts' },
+						{ slug: 'reference/plugins-catalog' },
 						{ slug: 'reference/domains' },
+						{ slug: 'reference/documentation-registry' },
 					],
+				},
+				{
+					label: 'Plugins',
+					items: pluginSidebarGroups,
+				},
+				{
+					label: 'Presets',
+					items: presetSidebarGroups,
 				},
 				{
 					label: 'Project',
