@@ -1,0 +1,18 @@
+{
+  "name": "plugin-gtk-style-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "e2e/plugin-gtk-style-e2e",
+  "projectType": "application",
+  "implicitDependencies": ["gtk-style"],
+  "tags": ["scope:plugin", "type:e2e"],
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "command": "vitest run --config vitest.e2e.config.ts",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}

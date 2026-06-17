@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "commit": "git-cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
+  "devDependencies": {
+    "knip": "^5.0.0"
+  }
+}

@@ -1,0 +1,4 @@
+permissions:
+  contents: write
+concurrency:
+  cancel-in-progress: false

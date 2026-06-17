@@ -1,0 +1,12 @@
+[project]
+dependencies = ["pydantic"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.mypy]
+strict = true
+
+[tool.bandit]
+
+[tool.pip-audit]

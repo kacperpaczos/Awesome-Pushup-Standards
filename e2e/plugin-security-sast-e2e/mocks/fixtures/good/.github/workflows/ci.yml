@@ -1,0 +1,7 @@
+jobs:
+  sast:
+    steps:
+      - run: bandit -r .
+  sbom:
+    steps:
+      - run: syft packages dir:./

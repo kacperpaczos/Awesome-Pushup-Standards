@@ -1,0 +1,5 @@
+permissions:
+  contents: read
+on:
+  pull_request_target:
+# fork PRs no secrets

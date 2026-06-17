@@ -1,0 +1,18 @@
+{
+  "name": "plugin-architecture-rules-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "e2e/plugin-architecture-rules-e2e",
+  "projectType": "application",
+  "implicitDependencies": ["architecture-rules"],
+  "tags": ["scope:plugin", "type:e2e"],
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "command": "vitest run --config vitest.e2e.config.ts",
+        "cwd": "{workspaceRoot}"
+      }
+    }
+  }
+}

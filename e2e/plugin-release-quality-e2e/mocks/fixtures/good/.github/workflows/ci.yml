@@ -1,0 +1,4 @@
+jobs:
+  preview:
+    steps:
+      - run: npx pkg-pr-new publish
