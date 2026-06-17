@@ -27,7 +27,8 @@
 export const PLUGIN_CATALOG_META = {
   'api-openapi': {
     kind: 'hybrid',
-    detects: 'OpenAPI spec files, Spectral lint results, API versioning, and schema-first design signals',
+    detects:
+      'OpenAPI spec files, Spectral lint results, API versioning, and schema-first design signals',
     externalTools: ['spectral'],
     configOptions: {
       rootDir: 'Project root (default: `.`)',
@@ -35,16 +36,19 @@ export const PLUGIN_CATALOG_META = {
   },
   'architecture-rules': {
     kind: 'hybrid',
-    detects: 'Forbidden imports, circular dependencies, and god modules via dependency-cruiser / import-linter',
+    detects:
+      'Forbidden imports, circular dependencies, and god modules via dependency-cruiser / import-linter',
     externalTools: ['dependency-cruiser', 'import-linter'],
     configOptions: {
       rootDir: 'Project root (default: `.`)',
-      godModuleImportThreshold: 'Import count threshold for god-module audit (default: varies by preset)',
+      godModuleImportThreshold:
+        'Import count threshold for god-module audit (default: varies by preset)',
     },
   },
   'cicd-quality': {
     kind: 'heuristic',
-    detects: 'GitHub Actions workflows — CI presence, pinned actions, multi-OS matrix, nx affected, dependency review',
+    detects:
+      'GitHub Actions workflows — CI presence, pinned actions, multi-OS matrix, nx affected, dependency review',
     externalTools: [],
     configOptions: {
       rootDir: 'Project root (default: `.`)',
@@ -52,7 +56,8 @@ export const PLUGIN_CATALOG_META = {
   },
   'contributor-hygiene': {
     kind: 'heuristic',
-    detects: 'Conventional commits, husky, prettier, knip, and related contributor tooling in the repo',
+    detects:
+      'Conventional commits, husky, prettier, knip, and related contributor tooling in the repo',
     externalTools: ['knip'],
     configOptions: {
       rootDir: 'Project root (default: `.`)',
@@ -101,7 +106,8 @@ export const PLUGIN_CATALOG_META = {
   },
   'llm-review': {
     kind: 'hybrid',
-    detects: 'Optional LLM rubric review for architecture, naming, and consistency (skips when not configured)',
+    detects:
+      'Optional LLM rubric review for architecture, naming, and consistency (skips when not configured)',
     externalTools: [],
     configOptions: {
       rootDir: 'Project root (default: `.`)',
@@ -110,7 +116,8 @@ export const PLUGIN_CATALOG_META = {
   },
   'python-quality': {
     kind: 'wrapper',
-    detects: 'Python project and runs ruff, mypy/ty, coverage, bandit, and pip-audit when installed',
+    detects:
+      'Python project and runs ruff, mypy/ty, coverage, bandit, and pip-audit when installed',
     externalTools: ['ruff', 'mypy', 'ty', 'bandit', 'pip-audit', 'pytest-cov'],
     configOptions: {
       cwd: 'Working directory (default: `.`)',
@@ -156,7 +163,8 @@ export const PLUGIN_CATALOG_META = {
   },
   'react-standards': {
     kind: 'heuristic',
-    detects: 'React 19 patterns in package.json and Vite config — state management, hooks, forms, bundle budget, a11y',
+    detects:
+      'React 19 patterns in package.json and Vite config — state management, hooks, forms, bundle budget, a11y',
     externalTools: ['eslint-plugin-react-hooks', 'axe'],
     configOptions: {
       packageJsonPath: 'Path to package.json (default: `package.json`)',
@@ -172,7 +180,8 @@ export const PLUGIN_CATALOG_META = {
   },
   'rust-modules': {
     kind: 'heuristic',
-    detects: 'Rust crate layout — module structure, public API surface, and binary crate conventions',
+    detects:
+      'Rust crate layout — module structure, public API surface, and binary crate conventions',
     externalTools: [],
     configOptions: {
       rootDir: 'Project root (default: `.`)',
@@ -180,7 +189,8 @@ export const PLUGIN_CATALOG_META = {
   },
   'rust-quality': {
     kind: 'wrapper',
-    detects: 'Rust workspace and runs cargo clippy, rustfmt, cargo audit, and cargo tarpaulin when installed',
+    detects:
+      'Rust workspace and runs cargo clippy, rustfmt, cargo audit, and cargo tarpaulin when installed',
     externalTools: ['cargo clippy', 'rustfmt', 'cargo audit', 'cargo tarpaulin'],
     configOptions: {
       cwd: 'Working directory (default: `.`)',
@@ -188,7 +198,8 @@ export const PLUGIN_CATALOG_META = {
   },
   'security-sast': {
     kind: 'hybrid',
-    detects: 'Secrets scanning config, dependency audit (npm/pip/cargo), SAST tooling, and SBOM generation in CI',
+    detects:
+      'Secrets scanning config, dependency audit (npm/pip/cargo), SAST tooling, and SBOM generation in CI',
     externalTools: ['gitleaks', 'npm audit', 'pip-audit', 'cargo audit', 'syft'],
     configOptions: {
       rootDir: 'Project root (default: `.`)',

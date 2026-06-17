@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-17T21:10:06.271Z",
+  "generatedAt": "2026-06-17T21:20:19.618Z",
   "entries": [
     {
       "slug": "api-openapi",
@@ -9,7 +9,7 @@
       "starlightPage": "plugins/api-openapi",
       "npmPackage": "@awesome-pushup-standards/api-openapi",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.260Z"
+      "lastSynced": "2026-06-17T21:20:19.610Z"
     },
     {
       "slug": "architecture-rules",
@@ -19,7 +19,7 @@
       "starlightPage": "plugins/architecture-rules",
       "npmPackage": "@awesome-pushup-standards/architecture-rules",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.261Z"
+      "lastSynced": "2026-06-17T21:20:19.610Z"
     },
     {
       "slug": "cicd-quality",
@@ -29,7 +29,7 @@
       "starlightPage": "plugins/cicd-quality",
       "npmPackage": "@awesome-pushup-standards/cicd-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.262Z"
+      "lastSynced": "2026-06-17T21:20:19.611Z"
     },
     {
       "slug": "contributor-hygiene",
@@ -39,7 +39,7 @@
       "starlightPage": "plugins/contributor-hygiene",
       "npmPackage": "@awesome-pushup-standards/contributor-hygiene",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.262Z"
+      "lastSynced": "2026-06-17T21:20:19.611Z"
     },
     {
       "slug": "cpp-qt-desktop",
@@ -49,7 +49,7 @@
       "starlightPage": "presets/cpp-qt-desktop",
       "npmPackage": "@awesome-pushup-standards/cpp-qt-desktop",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.269Z"
+      "lastSynced": "2026-06-17T21:20:19.617Z"
     },
     {
       "slug": "cpp-quality",
@@ -59,7 +59,7 @@
       "starlightPage": "plugins/cpp-quality",
       "npmPackage": "@awesome-pushup-standards/cpp-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.263Z"
+      "lastSynced": "2026-06-17T21:20:19.611Z"
     },
     {
       "slug": "docker-quality",
@@ -69,7 +69,7 @@
       "starlightPage": "plugins/docker-quality",
       "npmPackage": "@awesome-pushup-standards/docker-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.264Z"
+      "lastSynced": "2026-06-17T21:20:19.612Z"
     },
     {
       "slug": "docs-quality",
@@ -79,7 +79,7 @@
       "starlightPage": "plugins/docs-quality",
       "npmPackage": "@awesome-pushup-standards/docs-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.264Z"
+      "lastSynced": "2026-06-17T21:20:19.613Z"
     },
     {
       "slug": "error-logging",
@@ -89,7 +89,7 @@
       "starlightPage": "plugins/error-logging",
       "npmPackage": "@awesome-pushup-standards/error-logging",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.264Z"
+      "lastSynced": "2026-06-17T21:20:19.613Z"
     },
     {
       "slug": "gtk-desktop",
@@ -99,7 +99,7 @@
       "starlightPage": "presets/gtk-desktop",
       "npmPackage": "@awesome-pushup-standards/gtk-desktop",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.270Z"
+      "lastSynced": "2026-06-17T21:20:19.617Z"
     },
     {
       "slug": "gtk-style",
@@ -109,7 +109,7 @@
       "starlightPage": "plugins/gtk-style",
       "npmPackage": "@awesome-pushup-standards/gtk-style",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.265Z"
+      "lastSynced": "2026-06-17T21:20:19.613Z"
     },
     {
       "slug": "llm-review",
@@ -119,7 +119,7 @@
       "starlightPage": "plugins/llm-review",
       "npmPackage": "@awesome-pushup-standards/llm-review",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.265Z"
+      "lastSynced": "2026-06-17T21:20:19.613Z"
     },
     {
       "slug": "monorepo-ci-strict",
@@ -129,7 +129,7 @@
       "starlightPage": "presets/monorepo-ci-strict",
       "npmPackage": "@awesome-pushup-standards/monorepo-ci-strict",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.270Z"
+      "lastSynced": "2026-06-17T21:20:19.617Z"
     },
     {
       "slug": "python-backend-strict",
@@ -139,7 +139,7 @@
       "starlightPage": "presets/python-backend-strict",
       "npmPackage": "@awesome-pushup-standards/python-backend-strict",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.271Z"
+      "lastSynced": "2026-06-17T21:20:19.617Z"
     },
     {
       "slug": "python-quality",
@@ -149,7 +149,7 @@
       "starlightPage": "plugins/python-quality",
       "npmPackage": "@awesome-pushup-standards/python-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.265Z"
+      "lastSynced": "2026-06-17T21:20:19.614Z"
     },
     {
       "slug": "python-stack-detector",
@@ -159,7 +159,7 @@
       "starlightPage": "plugins/python-stack-detector",
       "npmPackage": "@awesome-pushup-standards/python-stack-detector",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.265Z"
+      "lastSynced": "2026-06-17T21:20:19.614Z"
     },
     {
       "slug": "qt-quality",
@@ -169,7 +169,7 @@
       "starlightPage": "plugins/qt-quality",
       "npmPackage": "@awesome-pushup-standards/qt-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.266Z"
+      "lastSynced": "2026-06-17T21:20:19.614Z"
     },
     {
       "slug": "react-app",
@@ -179,7 +179,7 @@
       "starlightPage": "presets/react-app",
       "npmPackage": "@awesome-pushup-standards/react-app",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.271Z"
+      "lastSynced": "2026-06-17T21:20:19.618Z"
     },
     {
       "slug": "react-standards",
@@ -189,7 +189,7 @@
       "starlightPage": "plugins/react-standards",
       "npmPackage": "@awesome-pushup-standards/react-standards",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.266Z"
+      "lastSynced": "2026-06-17T21:20:19.615Z"
     },
     {
       "slug": "release-quality",
@@ -199,7 +199,7 @@
       "starlightPage": "plugins/release-quality",
       "npmPackage": "@awesome-pushup-standards/release-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.266Z"
+      "lastSynced": "2026-06-17T21:20:19.615Z"
     },
     {
       "slug": "rust-cli",
@@ -209,7 +209,7 @@
       "starlightPage": "presets/rust-cli",
       "npmPackage": "@awesome-pushup-standards/rust-cli",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.271Z"
+      "lastSynced": "2026-06-17T21:20:19.618Z"
     },
     {
       "slug": "rust-modules",
@@ -219,7 +219,7 @@
       "starlightPage": "plugins/rust-modules",
       "npmPackage": "@awesome-pushup-standards/rust-modules",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.266Z"
+      "lastSynced": "2026-06-17T21:20:19.615Z"
     },
     {
       "slug": "rust-quality",
@@ -229,7 +229,7 @@
       "starlightPage": "plugins/rust-quality",
       "npmPackage": "@awesome-pushup-standards/rust-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.266Z"
+      "lastSynced": "2026-06-17T21:20:19.616Z"
     },
     {
       "slug": "security-sast",
@@ -239,7 +239,7 @@
       "starlightPage": "plugins/security-sast",
       "npmPackage": "@awesome-pushup-standards/security-sast",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.267Z"
+      "lastSynced": "2026-06-17T21:20:19.616Z"
     },
     {
       "slug": "ts-stack-detector",
@@ -249,7 +249,7 @@
       "starlightPage": "plugins/ts-stack-detector",
       "npmPackage": "@awesome-pushup-standards/ts-stack-detector",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:10:06.267Z"
+      "lastSynced": "2026-06-17T21:20:19.616Z"
     }
   ]
 }
