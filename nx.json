@@ -28,6 +28,10 @@
     },
     "int-test": {
       "cache": true
+    },
+    "e2e": {
+      "dependsOn": ["^build"],
+      "cache": true
     }
   }
 }

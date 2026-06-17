@@ -5,11 +5,16 @@
   "type": "module",
   "workspaces": [
     "packages/plugins/*",
-    "packages/presets/*"
+    "packages/presets/*",
+    "apps/docs"
   ],
   "scripts": {
     "build": "tsc -b",
     "test:all": "vitest run",
+    "e2e": "node scripts/run-e2e.mjs",
+    "e2e:build-images": "docker compose -f docker-compose.e2e.yml build",
+    "e2e:keep-reports": "node scripts/run-e2e.mjs --keep-reports",
+    "e2e:all": "node scripts/run-e2e.mjs --build-images",
     "lint": "eslint .",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
@@ -18,7 +23,10 @@
     "knip": "knip",
     "prepare": "husky",
     "version-packages": "changeset version",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "docs:dev": "npm run dev -w docs",
+    "docs:build": "npm run build -w docs",
+    "docs:preview": "npm run preview -w docs"
   },
   "config": {
     "commitizen": {

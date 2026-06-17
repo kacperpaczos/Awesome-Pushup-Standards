@@ -22,6 +22,13 @@
         "command": "npx code-pushup collect --skipPlugins llm-review",
         "cwd": "."
       }
+    },
+    "e2e": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "vitest run --config vitest.e2e.config.ts"
+      }
     }
   }
 }
