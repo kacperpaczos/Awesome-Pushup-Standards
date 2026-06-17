@@ -24,10 +24,10 @@ describe('architecture-rules runner', () => {
     await rm(dir, { recursive: true, force: true });
   });
 
-  it('scores high when dependency-cruiser and layers are configured', async () => {
+  it('scores high when dependency-cruiser with real rules is configured', async () => {
     await writeFile(
       join(dir, '.dependency-cruiser.js'),
-      'module.exports = { forbidden: [], allowed: [], options: { layer: true } };',
+      'module.exports = { forbidden: [{ name: "no-cycles", from: {}, to: {} }], options: {} };',
     );
 
     const outputs = await createRunner({ rootDir: dir })(runnerArgs);
@@ -36,6 +36,19 @@ describe('architecture-rules runner', () => {
     expect(bySlug['forbidden-imports']?.score).toBe(1);
     expect(bySlug['circular-dependencies']?.score).toBe(1);
     expect(bySlug['layer-violations']?.score).toBe(1);
+  });
+
+  it('fails layer-violations when dependency-cruiser has empty forbidden array', async () => {
+    await writeFile(
+      join(dir, '.dependency-cruiser.js'),
+      'module.exports = { forbidden: [], options: {} };',
+    );
+
+    const outputs = await createRunner({ rootDir: dir })(runnerArgs);
+    const bySlug = Object.fromEntries(outputs.map((o) => [o.slug, o]));
+
+    expect(bySlug['forbidden-imports']?.score).toBe(1);
+    expect(bySlug['layer-violations']?.score).toBe(0);
   });
 
   it('detects god modules above import threshold', async () => {
