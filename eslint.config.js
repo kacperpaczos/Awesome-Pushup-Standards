@@ -12,6 +12,7 @@ export default tseslint.config(
       'submodules/**',
       'e2e/**/mocks/**',
       'apps/docs/.astro/**',
+      'apps/docs/sidebar.generated.mjs',
     ],
   },
   {
