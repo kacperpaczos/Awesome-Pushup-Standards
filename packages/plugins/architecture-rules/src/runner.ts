@@ -2,7 +2,7 @@ import type { AuditOutput, AuditOutputs, RunnerArgs } from '@code-pushup/models'
 import { crawlFileSystem } from '@code-pushup/utils';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 
 export type RunnerOptions = {
   rootDir?: string;
@@ -75,7 +75,7 @@ async function hasLayerRules(root: string, pyproject: string): Promise<boolean> 
     const path = join(root, name);
     if (!existsSync(path)) continue;
     const content = await readFile(path, 'utf8');
-    if (/forbidden|allowed|layer|archi/i.test(content)) return true;
+    if (/forbidden\s*:\s*\[[^\]]*\{/.test(content)) return true;
   }
 
   return false;
@@ -96,6 +96,7 @@ async function findGodModules(
   const gods: { file: string; count: number }[] = [];
 
   for (const file of files) {
+    if (/^index\.(ts|tsx|js|jsx|mjs|cjs)$/.test(basename(file))) continue;
     const content = await readFile(file, 'utf8');
     const importCount = content
       .split('\n')
@@ -110,7 +111,7 @@ async function findGodModules(
 
 export function createRunner(options: RunnerOptions = {}) {
   const root = options.rootDir ?? '.';
-  const threshold = options.godModuleImportThreshold ?? 15;
+  const threshold = options.godModuleImportThreshold ?? 25;
 
   return async (_args: RunnerArgs): Promise<AuditOutputs> => {
     const pyproject = await readPyproject(root);

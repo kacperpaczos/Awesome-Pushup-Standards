@@ -1,10 +1,11 @@
 import type { AuditOutput, AuditOutputs, RunnerArgs } from '@code-pushup/models';
+import { DEFAULT_AUDIT_RIGOR, type AuditRigor } from '@awesome-pushup-standards/audit-contract';
 import { existsSync } from 'node:fs';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { runTool, skippedAudit } from './lib/run-tool.js';
 
-export type RunnerOptions = { rootDir?: string };
+export type RunnerOptions = { rootDir?: string; rigor?: AuditRigor };
 
 async function hasScannerInCi(rootDir: string): Promise<boolean> {
   const workflows = join(rootDir, '.github', 'workflows');
@@ -19,6 +20,7 @@ async function hasScannerInCi(rootDir: string): Promise<boolean> {
 
 export function createRunner(options: RunnerOptions = {}) {
   const rootDir = options.rootDir ?? '.';
+  const rigor = options.rigor ?? DEFAULT_AUDIT_RIGOR;
 
   return async (_args: RunnerArgs): Promise<AuditOutputs> => {
     const dockerfile = join(rootDir, 'Dockerfile');
@@ -36,7 +38,7 @@ export function createRunner(options: RunnerOptions = {}) {
       const hadolint = await runTool('hadolint', [dockerfile], rootDir);
       hadolintOut =
         hadolint.status === 'skipped'
-          ? skippedAudit('hadolint-violations', 'hadolint')
+          ? skippedAudit('hadolint-violations', 'hadolint', rigor)
           : {
               slug: 'hadolint-violations',
               value: hadolint.status === 'ok' ? 0 : 1,

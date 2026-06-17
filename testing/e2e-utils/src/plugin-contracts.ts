@@ -237,7 +237,11 @@ export const PLUGIN_CONTRACTS = {
   },
   'rust-modules': {
     image: 'e2e-rust:1.83',
-    tools: [{ name: 'cargo', command: 'cargo', args: ['--version'] }],
+    tools: [
+      { name: 'cargo', command: 'cargo', args: ['--version'] },
+      { name: 'cargo-modules', command: 'cargo', args: ['modules', '--version'] },
+      { name: 'cargo-deny', command: 'cargo-deny', args: ['--version'] },
+    ],
     good: {
       minScore: 0.9,
       requiredAudits: ['module-cycles', 'banned-dependencies'],

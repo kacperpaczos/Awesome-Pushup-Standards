@@ -1,4 +1,5 @@
 import type { CategoryConfig, CoreConfig, PluginConfig } from '@code-pushup/models';
+import { presetWeight, type AuditRigor } from '@awesome-pushup-standards/audit-contract';
 import axePlugin from '@code-pushup/axe-plugin';
 import coveragePlugin from '@code-pushup/coverage-plugin';
 import eslintPlugin from '@code-pushup/eslint-plugin';
@@ -14,10 +15,15 @@ export type Options = {
   tsconfigPath?: string;
   coverageReport?: string;
   axeUrl?: string;
+  rigor?: AuditRigor;
 };
+
+const DEFAULT_RIGOR: AuditRigor = 'base';
 
 export async function create(options: Options = {}): Promise<CoreConfig> {
   const rootDir = options.rootDir ?? '.';
+  const rigor = options.rigor ?? DEFAULT_RIGOR;
+  const w = (weight: number, toolDependent = false) => presetWeight(weight, rigor, toolDependent);
 
   const [eslint, typescript, coverage, tsStack, security, react, architecture] = await Promise.all([
     eslintPlugin({
@@ -31,9 +37,9 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
       reports: [options.coverageReport ?? `${rootDir}/coverage/lcov.info`],
     }),
     tsStackDetector({ packageJsonPath: `${rootDir}/package.json` }),
-    securitySast({ rootDir }),
+    securitySast({ rootDir, rigor }),
     reactStandards({ packageJsonPath: `${rootDir}/package.json` }),
-    architectureRules({ rootDir, godModuleImportThreshold: 15 }),
+    architectureRules({ rootDir, godModuleImportThreshold: 25 }),
   ]);
 
   const plugins: PluginConfig[] = [
@@ -50,14 +56,14 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
     {
       slug: 'bug-prevention',
       title: 'Bug prevention',
-      refs: [{ type: 'group', plugin: 'eslint', slug: 'problems', weight: 100 }],
+      refs: [{ type: 'group', plugin: 'eslint', slug: 'problems', weight: w(100) }],
     },
     {
       slug: 'code-style',
       title: 'Code style',
       refs: [
-        { type: 'group', plugin: 'eslint', slug: 'suggestions', weight: 75 },
-        { type: 'group', plugin: 'eslint', slug: 'formatting', weight: 25 },
+        { type: 'group', plugin: 'eslint', slug: 'suggestions', weight: w(75) },
+        { type: 'group', plugin: 'eslint', slug: 'formatting', weight: w(25) },
       ],
     },
     {
@@ -68,7 +74,7 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
           type: 'audit',
           plugin: 'typescript',
           slug: 'semantic-errors',
-          weight: 100,
+          weight: w(100),
         },
       ],
     },
@@ -80,19 +86,19 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
           type: 'audit',
           plugin: 'react-standards',
           slug: 'hooks-rules',
-          weight: 40,
+          weight: w(40),
         },
         {
           type: 'audit',
           plugin: 'react-standards',
           slug: 'recommended-state-libs',
-          weight: 30,
+          weight: w(30),
         },
         {
           type: 'audit',
           plugin: 'react-standards',
           slug: 'bundle-size',
-          weight: 30,
+          weight: w(30),
         },
       ],
     },
@@ -104,23 +110,54 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
           type: 'audit',
           plugin: 'ts-stack-detector',
           slug: 'suggest-typescript',
-          weight: 34,
+          weight: w(34),
         },
         {
           type: 'audit',
           plugin: 'ts-stack-detector',
           slug: 'suggest-zod',
-          weight: 33,
+          weight: w(33),
         },
         {
           type: 'audit',
           plugin: 'ts-stack-detector',
           slug: 'suggest-eslint',
-          weight: 33,
+          weight: w(33),
         },
       ],
     },
   ];
+
+  categories.push(
+    {
+      slug: 'security',
+      title: 'Security',
+      refs: [
+        { type: 'audit', plugin: 'security-sast', slug: 'secrets-detected', weight: w(20) },
+        { type: 'audit', plugin: 'security-sast', slug: 'dependency-audit', weight: w(50, true) },
+        { type: 'audit', plugin: 'security-sast', slug: 'sast-findings', weight: w(30) },
+      ],
+    },
+    {
+      slug: 'architecture',
+      title: 'Architecture',
+      refs: [
+        { type: 'audit', plugin: 'architecture-rules', slug: 'forbidden-imports', weight: w(40) },
+        {
+          type: 'audit',
+          plugin: 'architecture-rules',
+          slug: 'circular-dependencies',
+          weight: w(40),
+        },
+        { type: 'audit', plugin: 'architecture-rules', slug: 'layer-violations', weight: w(20) },
+      ],
+    },
+    {
+      slug: 'test-coverage',
+      title: 'Test coverage',
+      refs: [{ type: 'group', plugin: 'coverage', slug: 'coverage', weight: w(100) }],
+    },
+  );
 
   if (options.axeUrl) {
     const axe = axePlugin(options.axeUrl, { timeout: 5000 });
@@ -133,7 +170,7 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
           type: 'group',
           plugin: 'axe',
           slug: 'wcag21-level-aa',
-          weight: 100,
+          weight: w(100),
         },
       ],
     });

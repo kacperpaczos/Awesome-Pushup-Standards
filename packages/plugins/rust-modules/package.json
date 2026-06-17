@@ -17,5 +17,8 @@
   },
   "peerDependencies": {
     "@code-pushup/models": "*"
+  },
+  "dependencies": {
+    "@awesome-pushup-standards/audit-contract": "0.1.0"
   }
 }

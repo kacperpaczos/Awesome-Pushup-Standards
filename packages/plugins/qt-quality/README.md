@@ -2,6 +2,8 @@
 
 Heuristic Qt project checks with optional clazy detection.
 
+Missing `clazy` on PATH: `rigor: 'strict'` (default) returns `score: 0`; `rigor: 'base'` returns `score: 1` with `… — skipped`.
+
 ## Audits
 
 - `clazy-warnings` — detects `.clazy` or clazy in CMakeLists, or clazy on PATH

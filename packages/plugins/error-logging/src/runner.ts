@@ -13,7 +13,7 @@ type PackageJson = {
   devDependencies?: Record<string, string>;
 };
 
-const BARE_EXCEPT = /^\s*except\s*:/m;
+const BARE_EXCEPT = /^\s*except\s*(Exception|BaseException)?\s*:/m;
 const CONSOLE_LOG = /console\.log\s*\(/;
 const IS_TEST_FILE = /(\.test\.|\.spec\.|__tests__|\/tests\/)/;
 

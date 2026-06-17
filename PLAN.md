@@ -1,3 +1,5 @@
+> **Kanoniczna wiki:** przewodniki w [apps/docs](apps/docs/) (Starlight). Ten plik to pełna wizja projektu dla agentów i maintainerów — skróty operacyjne: [Backlog](apps/docs/src/content/docs/project/backlog.md), [Getting started](apps/docs/src/content/docs/guides/getting-started.md).
+
 # awesome-pushup-standards — Plan repozytorium (kompletny dokument projektowy)
 
 ## TL;DR

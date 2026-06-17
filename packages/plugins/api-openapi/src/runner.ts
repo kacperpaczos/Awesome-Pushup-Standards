@@ -1,4 +1,9 @@
 import type { AuditOutput, AuditOutputs, RunnerArgs } from '@code-pushup/models';
+import {
+  DEFAULT_AUDIT_RIGOR,
+  toolMissingAudit,
+  type AuditRigor,
+} from '@awesome-pushup-standards/audit-contract';
 import { crawlFileSystem } from '@code-pushup/utils';
 import { execFile } from 'node:child_process';
 import { existsSync } from 'node:fs';
@@ -10,6 +15,7 @@ const execFileAsync = promisify(execFile);
 
 export type RunnerOptions = {
   rootDir?: string;
+  rigor?: AuditRigor;
 };
 
 const SPEC_NAMES = [
@@ -30,7 +36,7 @@ function findSpecPath(root: string): string | undefined {
   return undefined;
 }
 
-async function runSpectral(specPath: string, cwd: string): Promise<AuditOutput> {
+async function runSpectral(specPath: string, cwd: string, rigor: AuditRigor): Promise<AuditOutput> {
   try {
     await execFileAsync('spectral', ['lint', specPath], {
       cwd,
@@ -45,20 +51,7 @@ async function runSpectral(specPath: string, cwd: string): Promise<AuditOutput> 
   } catch (error: unknown) {
     const err = error as NodeJS.ErrnoException & { stdout?: string; stderr?: string };
     if (err.code === 'ENOENT') {
-      return {
-        slug: 'spectral-violations',
-        value: 0,
-        score: 1,
-        displayValue: 'spectral not installed — skipped',
-        details: {
-          issues: [
-            {
-              message: 'install @stoplight/spectral-cli to lint OpenAPI specs',
-              severity: 'info',
-            },
-          ],
-        },
-      };
+      return toolMissingAudit('spectral-violations', 'spectral', rigor);
     }
     const output = `${err.stdout ?? ''}${err.stderr ?? ''}`;
     const violationCount = (output.match(/\berror\b/gi) ?? []).length || 1;
@@ -130,6 +123,7 @@ async function hasCodeFirstSignals(root: string): Promise<boolean> {
 
 export function createRunner(options: RunnerOptions = {}) {
   const root = options.rootDir ?? '.';
+  const rigor = options.rigor ?? DEFAULT_AUDIT_RIGOR;
 
   return async (_args: RunnerArgs): Promise<AuditOutputs> => {
     const specPath = findSpecPath(root);
@@ -137,7 +131,7 @@ export function createRunner(options: RunnerOptions = {}) {
     const specContent = specPath ? await readFile(specPath, 'utf8') : '';
 
     const spectral = hasSpec
-      ? await runSpectral(specPath!, root)
+      ? await runSpectral(specPath!, root, rigor)
       : {
           slug: 'spectral-violations' as const,
           value: 1,

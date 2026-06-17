@@ -2,6 +2,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { toolMissingAudit } from '@awesome-pushup-standards/audit-contract';
 import { createRunner } from '../src/runner.js';
 
 const runnerArgs = {
@@ -60,5 +61,17 @@ describe('api-openapi runner', () => {
 
     const outputs = await createRunner({ rootDir: dir })(runnerArgs);
     expect(outputs.find((o) => o.slug === 'schema-first')?.score).toBe(0);
+  });
+
+  it('skips missing spectral in base rigor', () => {
+    const out = toolMissingAudit('spectral-violations', 'spectral', 'base');
+    expect(out.score).toBe(1);
+    expect(out.displayValue).toBe('spectral not installed — skipped');
+  });
+
+  it('fails missing spectral in strict rigor', () => {
+    const out = toolMissingAudit('spectral-violations', 'spectral', 'strict');
+    expect(out.score).toBe(0);
+    expect(out.displayValue).toBe('spectral not installed');
   });
 });

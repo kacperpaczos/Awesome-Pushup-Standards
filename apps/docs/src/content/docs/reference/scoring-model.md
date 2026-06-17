@@ -35,6 +35,8 @@ Categories aggregate **across plugins** using `CategoryRef`:
 
 Weight **0** = informational only, no impact on category score.
 
+For wrapper plugins, see [Audit contracts](/reference/audit-contracts/) — presets use `rigor: 'base' | 'strict'` to control both plugin skip behaviour and category weights for tool-dependent audits.
+
 In `monorepo-ci-strict`, optional infrastructure (e.g. Nx Cloud remote cache, Codecov uploads) is not scored unless you add refs with weight > 0. Use weight **0** for audits that depend on org secrets such as `NX_CLOUD_ACCESS_TOKEN`.
 
 ## Quality leaps

@@ -12,10 +12,16 @@ const runnerArgs = {
 };
 
 describe('cpp-quality', () => {
-  it('skipped audit has score 1', () => {
+  it('returns score 0 when tool not installed (strict rigor default)', () => {
     const out = skippedAudit('clang-tidy-warnings', 'clang-tidy');
+    expect(out.score).toBe(0);
+    expect(out.displayValue).toBe('clang-tidy not installed');
+  });
+
+  it('returns score 1 skip when tool not installed in base rigor', () => {
+    const out = skippedAudit('clang-tidy-warnings', 'clang-tidy', 'base');
     expect(out.score).toBe(1);
-    expect(out.displayValue).toContain('skipped');
+    expect(out.displayValue).toBe('clang-tidy not installed — skipped');
   });
 
   it('returns all audit slugs', async () => {

@@ -2,7 +2,7 @@
 
 Wrapper plugin for Python quality tools: ruff, mypy, pytest-cov, bandit, pip-audit.
 
-Tools that are not installed are gracefully skipped (score 1, informational).
+Missing CLI tools depend on `rigor`: `'strict'` (default) returns `score: 0`; `'base'` returns `score: 1` with `… — skipped`. See [Audit contracts](/reference/audit-contracts/).
 
 ## Usage
 

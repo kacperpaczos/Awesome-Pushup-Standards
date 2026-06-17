@@ -12,10 +12,16 @@ const runnerArgs = {
 };
 
 describe('rust-quality', () => {
-  it('skipped audit has score 1', () => {
+  it('returns score 0 when tool not installed (strict rigor default)', () => {
     const out = skippedAudit('clippy-warnings', 'cargo clippy');
+    expect(out.score).toBe(0);
+    expect(out.displayValue).toBe('cargo clippy not installed');
+  });
+
+  it('returns score 1 skip when tool not installed in base rigor', () => {
+    const out = skippedAudit('clippy-warnings', 'cargo clippy', 'base');
     expect(out.score).toBe(1);
-    expect(out.displayValue).toContain('skipped');
+    expect(out.displayValue).toBe('cargo clippy not installed — skipped');
   });
 
   it('returns four rust quality audits', async () => {

@@ -7,9 +7,15 @@ describe('python-quality parsers', () => {
     expect(output.score).toBe(1);
   });
 
-  it('skips when ruff not found', () => {
+  it('returns score 0 when ruff not installed (strict rigor default)', () => {
     const output = parseRuff({ status: 'skipped', reason: 'ruff not found' });
+    expect(output.score).toBe(0);
+    expect(output.displayValue).toBe('ruff not installed');
+  });
+
+  it('returns score 1 skip when ruff not installed in base rigor', () => {
+    const output = parseRuff({ status: 'skipped', reason: 'ruff not found' }, 'base');
     expect(output.score).toBe(1);
-    expect(output.displayValue).toContain('skipped');
+    expect(output.displayValue).toBe('ruff not installed — skipped');
   });
 });

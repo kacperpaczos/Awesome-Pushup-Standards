@@ -1,3 +1,8 @@
+import {
+  DEFAULT_AUDIT_RIGOR,
+  toolMissingAudit,
+  type AuditRigor,
+} from '@awesome-pushup-standards/audit-contract';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
@@ -31,6 +36,6 @@ export async function runTool(command: string, args: string[], cwd?: string): Pr
   }
 }
 
-export function skippedAudit(slug: string, tool: string) {
-  return { slug, value: 0, score: 1, displayValue: `${tool} not found — skipped` };
+export function skippedAudit(slug: string, tool: string, rigor: AuditRigor = DEFAULT_AUDIT_RIGOR) {
+  return toolMissingAudit(slug, tool, rigor);
 }

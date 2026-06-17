@@ -5,27 +5,41 @@ description: Curated code-pushup plugins and presets for orchestrating quality t
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-**awesome-pushup-standards** wraps ruff, ESLint, clippy, Spectral, hadolint, and more into a single code-pushup scoreboard. Presets ship ready-made weights; plugins expose audits (0–1), groups, and weighted categories.
+**awesome-pushup-standards** wraps ruff, ESLint, clippy, Spectral, hadolint, and more into a single code-pushup scoreboard.
 
 ## Quick links
 
 <CardGrid>
+	<Card title="Getting started" icon="rocket">
+		Install, presets, first collect — [guides/getting-started](/guides/getting-started/).
+	</Card>
 	<Card title="Plugin authoring" icon="document">
-		How to create and test a new plugin — [guides/plugin-authoring](/guides/plugin-authoring/).
+		Create and document a new plugin — [guides/plugin-authoring](/guides/plugin-authoring/).
 	</Card>
-	<Card title="E2E testing" icon="rocket">
-		How to run unit, E2E, and smoke tests for all 19 plugins — [guides/e2e-testing](/guides/e2e-testing/#running-tests-for-all-19-plugins).
+	<Card title="Plugins catalog" icon="open-book">
+		All plugins — what they detect, audits, presets — [reference/plugins-catalog](/reference/plugins-catalog/).
 	</Card>
-	<Card title="Monorepo CI/CD" icon="setting">
-		Workflows, shift-left tooling, and release checklist — [project/monorepo-ci](/project/monorepo-ci/).
+	<Card title="Documentation registry" icon="open-book">
+		Where each package docs are authored and published — [reference/documentation-registry](/reference/documentation-registry/).
 	</Card>
-	<Card title="Backlog" icon="open-book">
-		Done, Pending, Deferred, and Cancelled items — [project/backlog](/project/backlog/).
+	<Card title="E2E testing" icon="setting">
+		Contract tests for all 19 plugins — [guides/e2e-testing](/guides/e2e-testing/).
+	</Card>
+	<Card title="Contributing" icon="document">
+		PR workflow and quality bar — [guides/contributing](/guides/contributing/).
+	</Card>
+	<Card title="Backlog" icon="star">
+		Pending and deferred items — [project/backlog](/project/backlog/).
 	</Card>
 </CardGrid>
 
-## Related repo docs
+## Browse packages
 
-- [README](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/README.md) — install, presets, development commands
-- [CONTRIBUTING](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/CONTRIBUTING.md) — PR workflow and conventions
-- [PLAN](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/PLAN.md) — implementation roadmap
+- **Plugins** — sidebar grouped by domain (Python, Rust, CI/CD, …) or [Plugins catalog](/reference/plugins-catalog/) for one-page overview
+- **Presets** — ready-made category weights
+- [Domains](/reference/domains/) — implementation status
+
+## Related repo files
+
+- [README](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/README.md) — short landing
+- [PLAN](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/PLAN.md) — full project vision (Polish)

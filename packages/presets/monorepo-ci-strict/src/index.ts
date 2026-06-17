@@ -1,4 +1,5 @@
 import type { CoreConfig } from '@code-pushup/models';
+import { presetWeight, type AuditRigor } from '@awesome-pushup-standards/audit-contract';
 import cicdQuality from '@awesome-pushup-standards/cicd-quality';
 import contributorHygiene from '@awesome-pushup-standards/contributor-hygiene';
 import docsQuality from '@awesome-pushup-standards/docs-quality';
@@ -7,17 +8,22 @@ import securitySast from '@awesome-pushup-standards/security-sast';
 
 export type Options = {
   rootDir?: string;
+  rigor?: AuditRigor;
 };
+
+const DEFAULT_RIGOR: AuditRigor = 'strict';
 
 export async function create(options: Options = {}): Promise<CoreConfig> {
   const rootDir = options.rootDir ?? '.';
+  const rigor = options.rigor ?? DEFAULT_RIGOR;
+  const w = (weight: number, toolDependent = false) => presetWeight(weight, rigor, toolDependent);
 
   const [cicd, contributor, release, docs, security] = await Promise.all([
     cicdQuality({ rootDir }),
     contributorHygiene({ rootDir }),
     releaseQuality({ rootDir }),
     docsQuality({ rootDir }),
-    securitySast({ rootDir }),
+    securitySast({ rootDir, rigor }),
   ]);
 
   return {
@@ -27,15 +33,15 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
         slug: 'ci-cd',
         title: 'CI/CD',
         refs: [
-          { type: 'audit', plugin: 'cicd-quality', slug: 'ci-present', weight: 20 },
-          { type: 'audit', plugin: 'cicd-quality', slug: 'actions-pinned', weight: 10 },
-          { type: 'audit', plugin: 'cicd-quality', slug: 'multi-os-ci', weight: 15 },
-          { type: 'audit', plugin: 'cicd-quality', slug: 'nx-affected-ci', weight: 15 },
+          { type: 'audit', plugin: 'cicd-quality', slug: 'ci-present', weight: w(20) },
+          { type: 'audit', plugin: 'cicd-quality', slug: 'actions-pinned', weight: w(10) },
+          { type: 'audit', plugin: 'cicd-quality', slug: 'multi-os-ci', weight: w(15) },
+          { type: 'audit', plugin: 'cicd-quality', slug: 'nx-affected-ci', weight: w(15) },
           {
             type: 'audit',
             plugin: 'cicd-quality',
             slug: 'dependency-review-workflow',
-            weight: 10,
+            weight: w(10),
           },
         ],
       },
@@ -43,15 +49,15 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
         slug: 'release-security',
         title: 'Release & security',
         refs: [
-          { type: 'audit', plugin: 'release-quality', slug: 'npm-oidc-publish', weight: 15 },
+          { type: 'audit', plugin: 'release-quality', slug: 'npm-oidc-publish', weight: w(15) },
           {
             type: 'audit',
             plugin: 'release-quality',
             slug: 'separated-release-publish',
-            weight: 10,
+            weight: w(10),
           },
-          { type: 'audit', plugin: 'cicd-quality', slug: 'fork-safe-workflows', weight: 10 },
-          { type: 'audit', plugin: 'cicd-quality', slug: 'minimal-permissions', weight: 5 },
+          { type: 'audit', plugin: 'cicd-quality', slug: 'fork-safe-workflows', weight: w(10) },
+          { type: 'audit', plugin: 'cicd-quality', slug: 'minimal-permissions', weight: w(5) },
         ],
       },
       {
@@ -62,19 +68,19 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
             type: 'audit',
             plugin: 'contributor-hygiene',
             slug: 'conventional-commits',
-            weight: 15,
+            weight: w(15),
           },
           {
             type: 'audit',
             plugin: 'contributor-hygiene',
             slug: 'pre-commit-hooks',
-            weight: 10,
+            weight: w(10),
           },
           {
             type: 'audit',
             plugin: 'contributor-hygiene',
             slug: 'commitizen-configured',
-            weight: 5,
+            weight: w(5),
           },
         ],
       },
@@ -82,9 +88,9 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
         slug: 'documentation',
         title: 'Documentation',
         refs: [
-          { type: 'audit', plugin: 'docs-quality', slug: 'readme-completeness', weight: 10 },
-          { type: 'audit', plugin: 'release-quality', slug: 'security-policy', weight: 5 },
-          { type: 'audit', plugin: 'docs-quality', slug: 'has-contributing', weight: 5 },
+          { type: 'audit', plugin: 'docs-quality', slug: 'readme-completeness', weight: w(10) },
+          { type: 'audit', plugin: 'release-quality', slug: 'security-policy', weight: w(5) },
+          { type: 'audit', plugin: 'docs-quality', slug: 'has-contributing', weight: w(5) },
         ],
       },
       {
@@ -95,10 +101,10 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
             type: 'audit',
             plugin: 'contributor-hygiene',
             slug: 'knip-configured',
-            weight: 4,
+            weight: w(4),
           },
-          { type: 'audit', plugin: 'release-quality', slug: 'pkg-preview-on-pr', weight: 3 },
-          { type: 'audit', plugin: 'release-quality', slug: 'release-environment', weight: 3 },
+          { type: 'audit', plugin: 'release-quality', slug: 'pkg-preview-on-pr', weight: w(3) },
+          { type: 'audit', plugin: 'release-quality', slug: 'release-environment', weight: w(3) },
         ],
       },
     ],

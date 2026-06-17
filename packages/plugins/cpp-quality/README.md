@@ -1,6 +1,8 @@
 # @awesome-pushup-standards/cpp-quality
 
-Wrapper plugin for C++ static analysis tools with graceful skip when binaries are missing.
+Wrapper plugin for C++ static analysis tools.
+
+Missing CLI tools: `rigor: 'strict'` (default) returns `score: 0`; `rigor: 'base'` returns `score: 1` with `… — skipped`.
 
 ## Audits
 

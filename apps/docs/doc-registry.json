@@ -1,0 +1,255 @@
+{
+  "generatedAt": "2026-06-17T21:10:06.271Z",
+  "entries": [
+    {
+      "slug": "api-openapi",
+      "kind": "plugin",
+      "domain": "API design",
+      "packageReadme": "packages/plugins/api-openapi/README.md",
+      "starlightPage": "plugins/api-openapi",
+      "npmPackage": "@awesome-pushup-standards/api-openapi",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.260Z"
+    },
+    {
+      "slug": "architecture-rules",
+      "kind": "plugin",
+      "domain": "Architecture",
+      "packageReadme": "packages/plugins/architecture-rules/README.md",
+      "starlightPage": "plugins/architecture-rules",
+      "npmPackage": "@awesome-pushup-standards/architecture-rules",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.261Z"
+    },
+    {
+      "slug": "cicd-quality",
+      "kind": "plugin",
+      "domain": "CI/CD",
+      "packageReadme": "packages/plugins/cicd-quality/README.md",
+      "starlightPage": "plugins/cicd-quality",
+      "npmPackage": "@awesome-pushup-standards/cicd-quality",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.262Z"
+    },
+    {
+      "slug": "contributor-hygiene",
+      "kind": "plugin",
+      "domain": "CI/CD",
+      "packageReadme": "packages/plugins/contributor-hygiene/README.md",
+      "starlightPage": "plugins/contributor-hygiene",
+      "npmPackage": "@awesome-pushup-standards/contributor-hygiene",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.262Z"
+    },
+    {
+      "slug": "cpp-qt-desktop",
+      "kind": "preset",
+      "domain": "C++/Qt",
+      "packageReadme": "packages/presets/cpp-qt-desktop/README.md",
+      "starlightPage": "presets/cpp-qt-desktop",
+      "npmPackage": "@awesome-pushup-standards/cpp-qt-desktop",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.269Z"
+    },
+    {
+      "slug": "cpp-quality",
+      "kind": "plugin",
+      "domain": "C++",
+      "packageReadme": "packages/plugins/cpp-quality/README.md",
+      "starlightPage": "plugins/cpp-quality",
+      "npmPackage": "@awesome-pushup-standards/cpp-quality",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.263Z"
+    },
+    {
+      "slug": "docker-quality",
+      "kind": "plugin",
+      "domain": "Docker",
+      "packageReadme": "packages/plugins/docker-quality/README.md",
+      "starlightPage": "plugins/docker-quality",
+      "npmPackage": "@awesome-pushup-standards/docker-quality",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.264Z"
+    },
+    {
+      "slug": "docs-quality",
+      "kind": "plugin",
+      "domain": "Documentation",
+      "packageReadme": "packages/plugins/docs-quality/README.md",
+      "starlightPage": "plugins/docs-quality",
+      "npmPackage": "@awesome-pushup-standards/docs-quality",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.264Z"
+    },
+    {
+      "slug": "error-logging",
+      "kind": "plugin",
+      "domain": "Error handling",
+      "packageReadme": "packages/plugins/error-logging/README.md",
+      "starlightPage": "plugins/error-logging",
+      "npmPackage": "@awesome-pushup-standards/error-logging",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.264Z"
+    },
+    {
+      "slug": "gtk-desktop",
+      "kind": "preset",
+      "domain": "GTK/GNOME",
+      "packageReadme": "packages/presets/gtk-desktop/README.md",
+      "starlightPage": "presets/gtk-desktop",
+      "npmPackage": "@awesome-pushup-standards/gtk-desktop",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.270Z"
+    },
+    {
+      "slug": "gtk-style",
+      "kind": "plugin",
+      "domain": "GTK/GNOME",
+      "packageReadme": "packages/plugins/gtk-style/README.md",
+      "starlightPage": "plugins/gtk-style",
+      "npmPackage": "@awesome-pushup-standards/gtk-style",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.265Z"
+    },
+    {
+      "slug": "llm-review",
+      "kind": "plugin",
+      "domain": "LLM review",
+      "packageReadme": "packages/plugins/llm-review/README.md",
+      "starlightPage": "plugins/llm-review",
+      "npmPackage": "@awesome-pushup-standards/llm-review",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.265Z"
+    },
+    {
+      "slug": "monorepo-ci-strict",
+      "kind": "preset",
+      "domain": "CI/CD",
+      "packageReadme": "packages/presets/monorepo-ci-strict/README.md",
+      "starlightPage": "presets/monorepo-ci-strict",
+      "npmPackage": "@awesome-pushup-standards/monorepo-ci-strict",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.270Z"
+    },
+    {
+      "slug": "python-backend-strict",
+      "kind": "preset",
+      "domain": "Python",
+      "packageReadme": "packages/presets/python-backend-strict/README.md",
+      "starlightPage": "presets/python-backend-strict",
+      "npmPackage": "@awesome-pushup-standards/python-backend-strict",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.271Z"
+    },
+    {
+      "slug": "python-quality",
+      "kind": "plugin",
+      "domain": "Python",
+      "packageReadme": "packages/plugins/python-quality/README.md",
+      "starlightPage": "plugins/python-quality",
+      "npmPackage": "@awesome-pushup-standards/python-quality",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.265Z"
+    },
+    {
+      "slug": "python-stack-detector",
+      "kind": "plugin",
+      "domain": "Python",
+      "packageReadme": "packages/plugins/python-stack-detector/README.md",
+      "starlightPage": "plugins/python-stack-detector",
+      "npmPackage": "@awesome-pushup-standards/python-stack-detector",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.265Z"
+    },
+    {
+      "slug": "qt-quality",
+      "kind": "plugin",
+      "domain": "Qt",
+      "packageReadme": "packages/plugins/qt-quality/README.md",
+      "starlightPage": "plugins/qt-quality",
+      "npmPackage": "@awesome-pushup-standards/qt-quality",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.266Z"
+    },
+    {
+      "slug": "react-app",
+      "kind": "preset",
+      "domain": "React",
+      "packageReadme": "packages/presets/react-app/README.md",
+      "starlightPage": "presets/react-app",
+      "npmPackage": "@awesome-pushup-standards/react-app",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.271Z"
+    },
+    {
+      "slug": "react-standards",
+      "kind": "plugin",
+      "domain": "React",
+      "packageReadme": "packages/plugins/react-standards/README.md",
+      "starlightPage": "plugins/react-standards",
+      "npmPackage": "@awesome-pushup-standards/react-standards",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.266Z"
+    },
+    {
+      "slug": "release-quality",
+      "kind": "plugin",
+      "domain": "CI/CD",
+      "packageReadme": "packages/plugins/release-quality/README.md",
+      "starlightPage": "plugins/release-quality",
+      "npmPackage": "@awesome-pushup-standards/release-quality",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.266Z"
+    },
+    {
+      "slug": "rust-cli",
+      "kind": "preset",
+      "domain": "Rust",
+      "packageReadme": "packages/presets/rust-cli/README.md",
+      "starlightPage": "presets/rust-cli",
+      "npmPackage": "@awesome-pushup-standards/rust-cli",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.271Z"
+    },
+    {
+      "slug": "rust-modules",
+      "kind": "plugin",
+      "domain": "Rust",
+      "packageReadme": "packages/plugins/rust-modules/README.md",
+      "starlightPage": "plugins/rust-modules",
+      "npmPackage": "@awesome-pushup-standards/rust-modules",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.266Z"
+    },
+    {
+      "slug": "rust-quality",
+      "kind": "plugin",
+      "domain": "Rust",
+      "packageReadme": "packages/plugins/rust-quality/README.md",
+      "starlightPage": "plugins/rust-quality",
+      "npmPackage": "@awesome-pushup-standards/rust-quality",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.266Z"
+    },
+    {
+      "slug": "security-sast",
+      "kind": "plugin",
+      "domain": "Security",
+      "packageReadme": "packages/plugins/security-sast/README.md",
+      "starlightPage": "plugins/security-sast",
+      "npmPackage": "@awesome-pushup-standards/security-sast",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.267Z"
+    },
+    {
+      "slug": "ts-stack-detector",
+      "kind": "plugin",
+      "domain": "JS/TS",
+      "packageReadme": "packages/plugins/ts-stack-detector/README.md",
+      "starlightPage": "plugins/ts-stack-detector",
+      "npmPackage": "@awesome-pushup-standards/ts-stack-detector",
+      "publishedVia": "both",
+      "lastSynced": "2026-06-17T21:10:06.267Z"
+    }
+  ]
+}
