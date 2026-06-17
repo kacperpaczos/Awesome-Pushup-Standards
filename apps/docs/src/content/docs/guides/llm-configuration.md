@@ -1,3 +1,8 @@
+---
+title: LLM configuration
+description: LLM configuration — awesome-pushup-standards
+---
+
 # LLM configuration
 
 The `llm-review` plugin is **optional**. Without configuration it sets `isSkipped: true` and never breaks CI.

@@ -1,3 +1,8 @@
+---
+title: Monorepo CI/CD
+description: Monorepo CI/CD — awesome-pushup-standards
+---
+
 # Monorepo CI/CD
 
 Ten dokument mapuje praktyki z [code-pushup/cli](https://github.com/code-pushup/cli) na audyty presetu `monorepo-ci-strict`.
@@ -26,7 +31,7 @@ flowchart TB
 
   subgraph release [Release]
     REL[release.yml — changesets version PR]
-    PUB[publish.yml — OIDC na tag v*.*.*]
+    PUB[publish.yml — disabled npm]
   end
 
   local --> pr
@@ -69,7 +74,7 @@ sequenceDiagram
 | `code-pushup-fork.yml`                    | Fork PR przez `pull_request_target`, bez sekretów      | `fork-safe-workflows`                                |
 | `dependency-review.yml`                   | Skan nowych zależności na PR                           | `dependency-review-workflow`                         |
 | `release.yml`                             | Changesets — PR wersjonujący                           | `separated-release-publish`, `release-environment`   |
-| `publish.yml`                             | OIDC publish na tag `v*.*.*`                           | `npm-oidc-publish`, `release-concurrency`            |
+| `publish.yml`                             | Disabled — npm publish out of scope                    | —                                                    |
 | `pr-commitlint.yml`                       | Conventional PR titles                                 | `pr-commitlint`                                      |
 | `git-checks.yml`                          | Blokada commitów `fixup!`                              | —                                                    |
 | `pr-labeler.yml` / `assign-pr-author.yml` | Automatyzacja PR                                       | —                                                    |
@@ -103,7 +108,7 @@ Submoduły (`submodules/`) są wykluczone z grafu Nx przez `.nxignore`.
 | `CODECOV_TOKEN`         | Opcjonal | Upload coverage (patrz TODO poniżej) |
 | `CP_API_KEY`            | Opcjonal | Upload raportów code-pushup          |
 
-Publikacja npm używa **OIDC trusted publishing** — bez długowiecznego `NPM_TOKEN`.
+Publikacja paczek na **npm jest poza zakresem** (bez Trusted Publisher / OIDC). Wersje `0.1.0+` i changelogi są w repozytorium; `publish.yml` pozostaje wyłączony (`if: false`).
 
 ## Kategorie presetu `monorepo-ci-strict`
 
@@ -128,7 +133,7 @@ pie title Wagi kategorii (względne)
 
 ## Faza publikacji
 
-Checklist operacyjna dla maintainers — od lokalnego repo do paczek na npm.
+Checklist operacyjna dla maintainers — od lokalnego repo do wersjonowania w GitHub (bez npm publish).
 
 ### Przepływ
 
@@ -138,13 +143,10 @@ sequenceDiagram
   participant GH as GitHub
   participant CI as ci.yml
   participant CS as changesets
-  participant NPM as npm registry
-
   Local->>GH: initial commit + push main
   GH->>CI: format lint test build
   Local->>GH: merge changeset version PR
-  CS->>GH: tag v0.x.x
-  GH->>NPM: publish.yml OIDC
+  CS->>GH: tag v0.x.x in repo
 ```
 
 ### Checklist
@@ -157,27 +159,20 @@ sequenceDiagram
 | 4    | `git commit` + `git push -u origin main`                | Done — [repo](https://github.com/kacperpaczos/Awesome-Pushup-Standards) |
 | 5    | GitHub → Environments → utworzyć **`release`**          | Done (API)                                                              |
 | 5b   | Actions → allow workflows to create PRs                 | Done (API)                                                              |
-| 6    | npmjs.com → Trusted Publisher (repo + `publish.yml`)    | **Ręcznie**                                                             |
+| 6    | npmjs.com → Trusted Publisher (repo + `publish.yml`)    | **Cancelled / out of scope** — publish tylko w repo, bez npm            |
 | 7    | Opcjonalnie: `NX_CLOUD_ACCESS_TOKEN`, `CP_API_KEY`      | Ręcznie                                                                 |
 | 8    | Branch protection na `main` (po zielonym CI)            | Ręcznie                                                                 |
 
-### npm OIDC (wymagane do publish)
+### npm publish (out of scope)
 
-1. Zaloguj się na [npmjs.com](https://www.npmjs.com) → **Access Tokens** → **Trusted Publishers**.
-2. Dodaj GitHub Actions:
-   - **Organization/user:** `kacperpaczos`
-   - **Repository:** `Awesome-Pushup-Standards`
-   - **Workflow filename:** `publish.yml`
-   - **Environment:** `release`
-3. W GitHub: **Settings → Environments → release** — utworzone; OIDC zastępuje `NPM_TOKEN`.
-4. **Settings → Actions → General → Workflow permissions:** „Read and write” + zezwól na tworzenie PR (wymagane przez `release.yml` / changesets).
+Publikacja paczek `@awesome-pushup-standards/*` na npm **nie jest planowana** — brak konfiguracji Trusted Publisher / OIDC. Workflow `publish.yml` jest wyłączony. Wersjonowanie odbywa się w repozytorium (changesets, tagi `v*.*.*`, CHANGELOG per pakiet).
 
 ### Po pushu — weryfikacja
 
 1. **Actions** — joby `ci.yml` zielone (ubuntu; windows/macos mogą ujawnić edge case'y).
 2. **Test PR** — `dependency-review`, `pr-commitlint`, komentarz code-pushup.
 3. Merge **Version Packages** PR (generowany przez `release.yml`).
-4. Tag `v*.*.*` uruchamia `publish.yml` → paczki `@awesome-pushup-standards/*` na npm.
+4. Tag `v*.*.*` w repozytorium dokumentuje release — bez publikacji na npm.
 
 ### Uwaga: `nx affected`
 
@@ -187,7 +182,9 @@ Komenda `npx nx affected -t lint,test,build --base=main` wymaga **historii commi
 
 ## TODO — do rozważenia
 
-Poniższe elementy są **świadomie odroczone**. Nie blokują obecnego CI; traktuj je jako roadmapę do dyskusji i kolejnych PR-ów.
+**Pełna lista otwartych i odroczonych pozycji:** [backlog.md](/project/backlog/).
+
+Poniższe elementy są **świadomie odroczone** (szczegóły). Nie blokują obecnego CI; traktuj je jako roadmapę do dyskusji i kolejnych PR-ów.
 
 ### 1. GitHub App bot dla release commitów
 
@@ -239,12 +236,12 @@ Poniższe elementy są **świadomie odroczone**. Nie blokują obecnego CI; trakt
 
 ### 6. E2E w piramidzie testów Nx
 
-|                 |                                                                                |
-| --------------- | ------------------------------------------------------------------------------ |
-| **Status**      | Placeholder                                                                    |
-| **Stan obecny** | `int-test` = `code-pushup collect`; brak dedykowanego targetu `e2e`            |
-| **Docelowo**    | E2E na `examples/*` gdy demo będą miały pełne scenariusze Playwright / podobne |
-| **Wzorzec**     | `e2e/*-e2e` w submodules/cli                                                   |
+|                 |                                                                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**      | **Pending verification** — implementacja Done; weryfikacja lokalna + CI Pending — [backlog.md](/project/backlog/#pending--najbliższe-kroki) |
+| **Stan obecny** | 19× `e2e/plugin-*-e2e`, target Nx `e2e`, job `e2e` w `ci.yml` (kod wdrożony)                                                                |
+| **Piramida**    | unit (Vitest) → e2e per plugin (Docker collect) → `int-test` smoke monorepo                                                                 |
+| **Wzorzec**     | `e2e/*-e2e` w submodules/cli · [e2e-testing.md](/guides/e2e-testing/)                                                                       |
 
 ### Roadmapa (obecny → docelowy)
 
@@ -253,7 +250,7 @@ flowchart LR
   subgraph now [Wdrożone]
     N1[Nx-lite + shift-left]
     N2[10 workflowów]
-    N3[OIDC publish]
+    N3[repo versioning]
     N4[3 pluginy CI/CD]
     N5[monorepo-ci-strict]
   end
@@ -264,7 +261,7 @@ flowchart LR
     T3[Codecov matrix]
     T4[Nx Release]
     T5[Nx Cloud]
-    T6[E2E target]
+    T6[E2E verify pending]
   end
 
   now --> todo
@@ -272,11 +269,11 @@ flowchart LR
 
 ### Priorytetyzacja (sugestia)
 
-| Priorytet | Element        | Effort | Impact              |
-| --------- | -------------- | ------ | ------------------- |
-| P2        | SHA pinning    | Średni | Supply chain        |
-| P2        | Codecov matrix | Średni | Widoczność coverage |
-| P3        | GitHub App bot | Wysoki | Release hygiene     |
-| P3        | Nx Cloud       | Niski  | Szybkość CI         |
-| P4        | Nx Release     | Wysoki | Uproszczenie CD     |
-| P4        | E2E target     | Wysoki | Pełne demo E2E      |
+| Priorytet | Element           | Effort | Impact              |
+| --------- | ----------------- | ------ | ------------------- |
+| **P1**    | E2E Docker verify | Niski  | Zamknięcie Fazy 7   |
+| P2        | SHA pinning       | Średni | Supply chain        |
+| P2        | Codecov matrix    | Średni | Widoczność coverage |
+| P3        | GitHub App bot    | Wysoki | Release hygiene     |
+| P3        | Nx Cloud          | Niski  | Szybkość CI         |
+| P4        | Nx Release        | Wysoki | Uproszczenie CD     |

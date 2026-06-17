@@ -1,3 +1,8 @@
+---
+title: Plugin authoring
+description: Plugin authoring — awesome-pushup-standards
+---
+
 # Plugin authoring
 
 ## Plugin types
