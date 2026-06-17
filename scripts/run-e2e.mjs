@@ -2,11 +2,11 @@
 /**
  * Run plugin E2E collects sequentially with per-fixture logs under e2e/plugin-*-e2e/logs/.
  *
- * Usage:
- *   node scripts/run-e2e.mjs
- *   node scripts/run-e2e.mjs --keep-reports
- *   node scripts/run-e2e.mjs --build-images
- *   node scripts/run-e2e.mjs python-quality
+ * Prefer npm scripts (no CLI flags):
+ *   npm run e2e
+ *   npm run e2e:rebuild
+ *   npm run e2e:images
+ *   npm run e2e -- python-quality
  */
 import { spawnSync } from 'node:child_process';
 import { readdir, stat, writeFile } from 'node:fs/promises';
@@ -14,22 +14,13 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
-const args = process.argv.slice(2);
+const pluginSlug = process.argv[2] || undefined;
 
-const keepReports = args.includes('--keep-reports');
-const buildImages = args.includes('--build-images');
-const pluginSlug = args.find((a) => !a.startsWith('--'));
-
-if (keepReports) {
-  // Backward-compatible flag: reports are canonical under e2e/**/logs/.
-  process.env.E2E_KEEP_REPORTS = '1';
-}
 if (process.env.E2E_COLLECT_LOG === undefined) {
   process.env.E2E_COLLECT_LOG = '1';
 }
 
 function run(command, cmdArgs, label) {
-  // eslint-disable-next-line no-console
   console.info(`\n▶ ${label}`);
   const result = spawnSync(command, cmdArgs, {
     cwd: repoRoot,
@@ -39,10 +30,6 @@ function run(command, cmdArgs, label) {
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }
-}
-
-if (buildImages) {
-  run('docker', ['compose', '-f', 'docker-compose.e2e.yml', 'build'], 'Building E2E Docker images');
 }
 
 const vitestArgs = [
@@ -116,20 +103,14 @@ async function writeLogsIndex(dirs) {
 
 const indexPath = await writeLogsIndex(logDirs);
 
-// eslint-disable-next-line no-console
 console.info('\n--- E2E logs (host-owned, under each test project) ---');
-// eslint-disable-next-line no-console
 console.info(`Combined log: e2e/logs/latest.log`);
-// eslint-disable-next-line no-console
 console.info(`Index JSON: ${indexPath}`);
 if (logDirs.length) {
-  // eslint-disable-next-line no-console
   console.info('Per fixture:');
   for (const dir of logDirs) {
-    // eslint-disable-next-line no-console
     console.info(`  ${dir}/collect.log`);
   }
 } else {
-  // eslint-disable-next-line no-console
   console.info('(no per-fixture logs — was E2E_COLLECT_LOG=0 set?)');
 }
