@@ -173,10 +173,13 @@ const PLUGINS = [
     options: 'rootDir',
     badAudit: 'banned-dependencies',
     good: {
+      'deny.toml':
+        '[advisories]\nignore = []\n\n[licenses]\nallow = ["MIT", "Apache-2.0", "Unicode-3.0"]\nconfidence-threshold = 0.8\n',
       'Cargo.toml':
-        '[package]\nname = "demo"\nversion = "0.1.0"\nedition = "2021"\n\n# cargo-deny configured in deny.toml\n',
-      'deny.toml': '[advisories]\nvulnerability = "deny"\n',
-      'src/main.rs': 'fn main() {}\n',
+        '[package]\nname = "demo"\nversion = "0.1.0"\nedition = "2021"\nlicense = "MIT"\n\n[dependencies]\nserde = "1"\n',
+      'src/main.rs': 'mod app;\nmod helpers;\n\nfn main() {\n    app::run();\n}\n',
+      'src/app.rs': 'use crate::helpers;\n\npub fn run() {\n    helpers::greet();\n}\n',
+      'src/helpers.rs': 'pub fn greet() {}\n',
     },
     bad: {
       'Cargo.toml': '[package]\nname = "demo"\nversion = "0.1.0"\nedition = "2021"\n',
