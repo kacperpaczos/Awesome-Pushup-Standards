@@ -23,8 +23,9 @@
     "prepare": "husky",
     "version-packages": "changeset version",
     "release": "changeset publish",
-    "docs:dev": "npm run dev -w docs",
-    "docs:build": "npm run build -w docs",
+    "docs:sync": "node scripts/sync-docs-to-starlight.mjs",
+    "docs:dev": "npm run docs:sync && npm run dev -w docs",
+    "docs:build": "npm run docs:sync && npm run build -w docs",
     "docs:preview": "npm run preview -w docs"
   },
   "config": {
