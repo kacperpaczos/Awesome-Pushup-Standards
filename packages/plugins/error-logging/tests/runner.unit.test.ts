@@ -51,4 +51,16 @@ describe('error-logging runner', () => {
     expect(outputs.find((o) => o.slug === 'bare-except')?.score).toBe(0);
     expect(outputs.find((o) => o.slug === 'no-print-debug')?.score).toBe(0);
   });
+
+  it('detects broad except Exception: as bare-except', async () => {
+    await writeFile(join(dir, 'broad.py'), 'try:\n    pass\nexcept Exception:\n    pass\n');
+    const outputs = await createRunner({ rootDir: dir })(runnerArgs);
+    expect(outputs.find((o) => o.slug === 'bare-except')?.score).toBe(0);
+  });
+
+  it('allows named exception handlers like except ValueError:', async () => {
+    await writeFile(join(dir, 'good.py'), 'try:\n    pass\nexcept ValueError:\n    pass\n');
+    const outputs = await createRunner({ rootDir: dir })(runnerArgs);
+    expect(outputs.find((o) => o.slug === 'bare-except')?.score).toBe(1);
+  });
 });
