@@ -15,6 +15,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
+    "@awesome-pushup-standards/audit-contract": "0.1.0",
     "@awesome-pushup-standards/cicd-quality": "0.1.0",
     "@awesome-pushup-standards/contributor-hygiene": "0.1.0",
     "@awesome-pushup-standards/docs-quality": "0.1.0",

@@ -1,4 +1,5 @@
 import type { CoreConfig } from '@code-pushup/models';
+import { presetWeight, type AuditRigor } from '@awesome-pushup-standards/audit-contract';
 import apiOpenapi from '@awesome-pushup-standards/api-openapi';
 import architectureRules from '@awesome-pushup-standards/architecture-rules';
 import dockerQuality from '@awesome-pushup-standards/docker-quality';
@@ -11,25 +12,30 @@ export type Options = {
   rootDir?: string;
   pyprojectPath?: string;
   includeDocker?: boolean;
+  rigor?: AuditRigor;
 };
+
+const DEFAULT_RIGOR: AuditRigor = 'strict';
 
 export async function create(options: Options = {}): Promise<CoreConfig> {
   const rootDir = options.rootDir ?? '.';
   const pyprojectPath = options.pyprojectPath ?? 'pyproject.toml';
   const includeDocker = options.includeDocker ?? true;
+  const rigor = options.rigor ?? DEFAULT_RIGOR;
+  const w = (weight: number, toolDependent = false) => presetWeight(weight, rigor, toolDependent);
 
   const [stack, quality, architecture, api, security, docs] = await Promise.all([
     pythonStackDetector({ pyprojectPath }),
-    pythonQuality({ cwd: rootDir }),
+    pythonQuality({ cwd: rootDir, rigor }),
     architectureRules({ rootDir }),
-    apiOpenapi({ rootDir }),
-    securitySast({ rootDir }),
+    apiOpenapi({ rootDir, rigor }),
+    securitySast({ rootDir, rigor }),
     docsQuality({ rootDir }),
   ]);
 
   const plugins = [quality, stack, architecture, api, security, docs];
   if (includeDocker) {
-    plugins.push(await dockerQuality({ rootDir }));
+    plugins.push(await dockerQuality({ rootDir, rigor }));
   }
 
   return {
@@ -43,13 +49,13 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
             type: 'audit',
             plugin: 'python-stack-detector',
             slug: 'has-pydantic',
-            weight: 50,
+            weight: w(50),
           },
           {
             type: 'audit',
             plugin: 'python-stack-detector',
             slug: 'has-type-checker',
-            weight: 50,
+            weight: w(50),
           },
         ],
       },
@@ -57,33 +63,25 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
         slug: 'code-quality',
         title: 'Code quality',
         refs: [
-          { type: 'audit', plugin: 'python-quality', slug: 'ruff-lint', weight: 40 },
-          { type: 'audit', plugin: 'python-quality', slug: 'type-errors', weight: 40 },
-          { type: 'audit', plugin: 'python-quality', slug: 'line-coverage', weight: 20 },
+          { type: 'audit', plugin: 'python-quality', slug: 'ruff-lint', weight: w(40, true) },
+          { type: 'audit', plugin: 'python-quality', slug: 'type-errors', weight: w(40, true) },
+          { type: 'audit', plugin: 'python-quality', slug: 'line-coverage', weight: w(20, true) },
         ],
       },
       {
         slug: 'security',
         title: 'Security',
         refs: [
+          { type: 'audit', plugin: 'python-quality', slug: 'bandit-findings', weight: w(30, true) },
           {
             type: 'audit',
-            plugin: 'security-sast',
-            slug: 'dependency-audit',
-            weight: 40,
+            plugin: 'python-quality',
+            slug: 'dependency-vulnerabilities',
+            weight: w(20, true),
           },
-          {
-            type: 'audit',
-            plugin: 'security-sast',
-            slug: 'sast-findings',
-            weight: 40,
-          },
-          {
-            type: 'audit',
-            plugin: 'security-sast',
-            slug: 'secrets-detected',
-            weight: 20,
-          },
+          { type: 'audit', plugin: 'security-sast', slug: 'dependency-audit', weight: w(25, true) },
+          { type: 'audit', plugin: 'security-sast', slug: 'sast-findings', weight: w(15) },
+          { type: 'audit', plugin: 'security-sast', slug: 'secrets-detected', weight: w(10) },
         ],
       },
       {
@@ -94,13 +92,13 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
             type: 'audit',
             plugin: 'architecture-rules',
             slug: 'forbidden-imports',
-            weight: 50,
+            weight: w(50),
           },
           {
             type: 'audit',
             plugin: 'architecture-rules',
             slug: 'circular-dependencies',
-            weight: 50,
+            weight: w(50),
           },
         ],
       },
@@ -112,13 +110,13 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
             type: 'audit',
             plugin: 'api-openapi',
             slug: 'spectral-violations',
-            weight: 60,
+            weight: w(60, true),
           },
           {
             type: 'audit',
             plugin: 'api-openapi',
             slug: 'has-openapi-spec',
-            weight: 40,
+            weight: w(40),
           },
         ],
       },
@@ -130,11 +128,39 @@ export async function create(options: Options = {}): Promise<CoreConfig> {
             type: 'audit',
             plugin: 'docs-quality',
             slug: 'readme-completeness',
-            weight: 50,
+            weight: w(50),
           },
-          { type: 'audit', plugin: 'docs-quality', slug: 'has-license', weight: 50 },
+          { type: 'audit', plugin: 'docs-quality', slug: 'has-license', weight: w(50) },
         ],
       },
+      ...(includeDocker
+        ? [
+            {
+              slug: 'deployment',
+              title: 'Deployment',
+              refs: [
+                {
+                  type: 'audit' as const,
+                  plugin: 'docker-quality',
+                  slug: 'hadolint-violations',
+                  weight: w(40, true),
+                },
+                {
+                  type: 'audit' as const,
+                  plugin: 'docker-quality',
+                  slug: 'multi-stage-build',
+                  weight: w(30),
+                },
+                {
+                  type: 'audit' as const,
+                  plugin: 'docker-quality',
+                  slug: 'image-vulnerabilities',
+                  weight: w(30),
+                },
+              ],
+            },
+          ]
+        : []),
     ],
   };
 }
