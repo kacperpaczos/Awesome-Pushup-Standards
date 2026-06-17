@@ -1,3 +1,5 @@
+> **Canonical wiki:** [Getting started](apps/docs/src/content/docs/guides/getting-started.md) · [Contributing guide](apps/docs/src/content/docs/guides/contributing.md) (Starlight). This file remains a short pointer for GitHub/npm.
+
 # Contributing
 
 Thank you for contributing to awesome-pushup-standards.
@@ -6,7 +8,7 @@ Thank you for contributing to awesome-pushup-standards.
 
 Every new plugin or preset must meet:
 
-1. **Unit tests** — min. 2 Vitest cases in `tests/` (positive + negative).
+1. **Unit tests** — min. 4 Vitest cases in `tests/` (positive, negative, tool not installed → score=0, empty project).
 2. **E2E** — `e2e/plugin-<slug>-e2e/` with good/bad fixtures; see [E2E testing — all 19 plugins](apps/docs/src/content/docs/guides/e2e-testing.md#running-tests-for-all-19-plugins) (`npm run docs:dev` for the full site).
 3. **README** — usage example with `code-pushup.config.ts` snippet.
 4. **PluginConfig compliance** — valid slugs (`/^[a-z\d]+(?:-[a-z\d]+)*$/`), scores 0–1.

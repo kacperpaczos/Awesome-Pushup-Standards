@@ -29,7 +29,7 @@ export async function create(): Promise<PluginConfig> {
 
 ### Wrapper (RunnerFunction or RunnerConfig)
 
-Execute external CLI tools (ruff, ESLint). Gracefully skip when tool is missing.
+Execute external CLI tools (ruff, ESLint). When a tool is missing, behaviour depends on `rigor` — see [Audit contracts](/reference/audit-contracts/).
 
 ## Slug rules
 
@@ -51,6 +51,16 @@ packages/plugins/<slug>/
 ## Testing
 
 Use Vitest with fixtures in `tests/fixtures/`. Mock filesystem with temp dirs for integration-style tests.
+
+## Documentation
+
+Each plugin needs:
+
+1. `packages/plugins/<slug>/README.md` — usage snippet (source of truth for npm).
+2. Domain entry in `scripts/sync-docs-to-starlight.mjs` (`PLUGIN_DOMAINS`).
+3. Run `npm run docs:sync` — creates `plugins/<slug>` Starlight page and [Documentation registry](/reference/documentation-registry/) row.
+
+Presets follow the same pattern under `packages/presets/` and `PRESET_DOMAINS`.
 
 ## References
 
