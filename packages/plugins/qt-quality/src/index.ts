@@ -8,7 +8,7 @@ export async function create(options: Options = {}): Promise<PluginConfig> {
   return {
     slug: 'qt-quality',
     title: 'Qt quality',
-    icon: 'qt' as MaterialIcon,
+    icon: 'cpp' satisfies MaterialIcon,
     description: 'Heuristic Qt checks and optional clazy detection.',
     audits,
     runner: createRunner(options),
