@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-17T21:20:19.618Z",
+  "generatedAt": "2026-06-17T21:21:14.219Z",
   "entries": [
     {
       "slug": "api-openapi",
@@ -9,7 +9,8 @@
       "starlightPage": "plugins/api-openapi",
       "npmPackage": "@awesome-pushup-standards/api-openapi",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.610Z"
+      "contentHash": "5e49ccabd10dfd41a74c907e51be8168d9c224fe618de25453494ce0dd091dc2",
+      "lastSynced": "2026-06-17T21:21:14.203Z"
     },
     {
       "slug": "architecture-rules",
@@ -19,7 +20,8 @@
       "starlightPage": "plugins/architecture-rules",
       "npmPackage": "@awesome-pushup-standards/architecture-rules",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.610Z"
+      "contentHash": "a5832eb5812d0e274822aff9ff83760e24ec7284c96f503009d157391ad82ff3",
+      "lastSynced": "2026-06-17T21:21:14.204Z"
     },
     {
       "slug": "cicd-quality",
@@ -29,7 +31,8 @@
       "starlightPage": "plugins/cicd-quality",
       "npmPackage": "@awesome-pushup-standards/cicd-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.611Z"
+      "contentHash": "d97c5bd870cec1242a13d51ff45ee67537d57e299711763fdb9e5f76107fadb7",
+      "lastSynced": "2026-06-17T21:21:14.205Z"
     },
     {
       "slug": "contributor-hygiene",
@@ -39,7 +42,8 @@
       "starlightPage": "plugins/contributor-hygiene",
       "npmPackage": "@awesome-pushup-standards/contributor-hygiene",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.611Z"
+      "contentHash": "dbeff2cc24269e2dfacf6a50821094b56a38637a010e03256a0ef31083f0b504",
+      "lastSynced": "2026-06-17T21:21:14.205Z"
     },
     {
       "slug": "cpp-qt-desktop",
@@ -49,7 +53,8 @@
       "starlightPage": "presets/cpp-qt-desktop",
       "npmPackage": "@awesome-pushup-standards/cpp-qt-desktop",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.617Z"
+      "contentHash": "e6900c6275b99b279bdfd026fb8b17187846a6b44aa09cfafaab161bbb4f1e87",
+      "lastSynced": "2026-06-17T21:21:14.210Z"
     },
     {
       "slug": "cpp-quality",
@@ -59,7 +64,8 @@
       "starlightPage": "plugins/cpp-quality",
       "npmPackage": "@awesome-pushup-standards/cpp-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.611Z"
+      "contentHash": "2b146055128b3bf054de881da43e563ceb517866fe6f425d5fef4d29420cab55",
+      "lastSynced": "2026-06-17T21:21:14.205Z"
     },
     {
       "slug": "docker-quality",
@@ -69,7 +75,8 @@
       "starlightPage": "plugins/docker-quality",
       "npmPackage": "@awesome-pushup-standards/docker-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.612Z"
+      "contentHash": "cf8f0d21fb1235a70a8baf0bcbca78562076f46c720625a3eb51c924997ae756",
+      "lastSynced": "2026-06-17T21:21:14.205Z"
     },
     {
       "slug": "docs-quality",
@@ -79,7 +86,8 @@
       "starlightPage": "plugins/docs-quality",
       "npmPackage": "@awesome-pushup-standards/docs-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.613Z"
+      "contentHash": "bfa34523d2c7d75f484b9f336f39dae192f9dc3da94880058b795436be76c372",
+      "lastSynced": "2026-06-17T21:21:14.206Z"
     },
     {
       "slug": "error-logging",
@@ -89,7 +97,8 @@
       "starlightPage": "plugins/error-logging",
       "npmPackage": "@awesome-pushup-standards/error-logging",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.613Z"
+      "contentHash": "099c30d498cf071a8e79b35be8cc6ea90c11a2f072c232d00dde9a7fb83919cc",
+      "lastSynced": "2026-06-17T21:21:14.206Z"
     },
     {
       "slug": "gtk-desktop",
@@ -99,7 +108,8 @@
       "starlightPage": "presets/gtk-desktop",
       "npmPackage": "@awesome-pushup-standards/gtk-desktop",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.617Z"
+      "contentHash": "4903c3d2cbbdf234f94dcb5d1b93ea9d1c012f49238ae1c483eb6bcc2cdc04a4",
+      "lastSynced": "2026-06-17T21:21:14.210Z"
     },
     {
       "slug": "gtk-style",
@@ -109,7 +119,8 @@
       "starlightPage": "plugins/gtk-style",
       "npmPackage": "@awesome-pushup-standards/gtk-style",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.613Z"
+      "contentHash": "a6bf5a6521f5814821feda37935f9fb7a298a2591b3a6748344c1dfd33dc33ee",
+      "lastSynced": "2026-06-17T21:21:14.206Z"
     },
     {
       "slug": "llm-review",
@@ -119,7 +130,8 @@
       "starlightPage": "plugins/llm-review",
       "npmPackage": "@awesome-pushup-standards/llm-review",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.613Z"
+      "contentHash": "db39216b5f8c9a4e3bfd5f3f51df2d60d0bc4c20337aa55b28f49f067d3f9a38",
+      "lastSynced": "2026-06-17T21:21:14.206Z"
     },
     {
       "slug": "monorepo-ci-strict",
@@ -129,7 +141,8 @@
       "starlightPage": "presets/monorepo-ci-strict",
       "npmPackage": "@awesome-pushup-standards/monorepo-ci-strict",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.617Z"
+      "contentHash": "e4309ac1c9b4640c863dabffbaed81e0a1d59764a6fbf9747176dd2bf8fb8e32",
+      "lastSynced": "2026-06-17T21:21:14.210Z"
     },
     {
       "slug": "python-backend-strict",
@@ -139,7 +152,8 @@
       "starlightPage": "presets/python-backend-strict",
       "npmPackage": "@awesome-pushup-standards/python-backend-strict",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.617Z"
+      "contentHash": "2cc8a444cfdc659fbc9d044cb3fe9d5cad0da10d1770272169ffa9eab9cf79a4",
+      "lastSynced": "2026-06-17T21:21:14.210Z"
     },
     {
       "slug": "python-quality",
@@ -149,7 +163,8 @@
       "starlightPage": "plugins/python-quality",
       "npmPackage": "@awesome-pushup-standards/python-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.614Z"
+      "contentHash": "9484fdec531a025d12f5d3b87a34264c384381a6ecf2c1e86f79c0457e675019",
+      "lastSynced": "2026-06-17T21:21:14.207Z"
     },
     {
       "slug": "python-stack-detector",
@@ -159,7 +174,8 @@
       "starlightPage": "plugins/python-stack-detector",
       "npmPackage": "@awesome-pushup-standards/python-stack-detector",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.614Z"
+      "contentHash": "e2f683e8ae29d1375f80d36854c1fc55b6e5af108c484b55bc1107751e563868",
+      "lastSynced": "2026-06-17T21:21:14.207Z"
     },
     {
       "slug": "qt-quality",
@@ -169,7 +185,8 @@
       "starlightPage": "plugins/qt-quality",
       "npmPackage": "@awesome-pushup-standards/qt-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.614Z"
+      "contentHash": "fe8fc937d21fb6f8230e3a247889dc4a4f22c740f93e06afbd8d8bfa683df479",
+      "lastSynced": "2026-06-17T21:21:14.207Z"
     },
     {
       "slug": "react-app",
@@ -179,7 +196,8 @@
       "starlightPage": "presets/react-app",
       "npmPackage": "@awesome-pushup-standards/react-app",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.618Z"
+      "contentHash": "195cf44514c4875aaee44452aea3fef3c9db4d9081771db035afc4d3961d3969",
+      "lastSynced": "2026-06-17T21:21:14.210Z"
     },
     {
       "slug": "react-standards",
@@ -189,7 +207,8 @@
       "starlightPage": "plugins/react-standards",
       "npmPackage": "@awesome-pushup-standards/react-standards",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.615Z"
+      "contentHash": "dd4c1f82db9229602b76d0dea7c84ff7efd88cfdaaf12ab7a064e4db5ab406a5",
+      "lastSynced": "2026-06-17T21:21:14.208Z"
     },
     {
       "slug": "release-quality",
@@ -199,7 +218,8 @@
       "starlightPage": "plugins/release-quality",
       "npmPackage": "@awesome-pushup-standards/release-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.615Z"
+      "contentHash": "c8a5c2d1a5d81b178ec8e3a055c47584486c9b0ae6d8efea30d4fbc9524eb951",
+      "lastSynced": "2026-06-17T21:21:14.208Z"
     },
     {
       "slug": "rust-cli",
@@ -209,7 +229,8 @@
       "starlightPage": "presets/rust-cli",
       "npmPackage": "@awesome-pushup-standards/rust-cli",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.618Z"
+      "contentHash": "7ec6b720429102156def0381e276bee2e9c4a8ec0901ec2332c2a99992612da3",
+      "lastSynced": "2026-06-17T21:21:14.211Z"
     },
     {
       "slug": "rust-modules",
@@ -219,7 +240,8 @@
       "starlightPage": "plugins/rust-modules",
       "npmPackage": "@awesome-pushup-standards/rust-modules",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.615Z"
+      "contentHash": "2020a99c146775781f9b1fbf1fbd447f1f9f2dd9c86fc9c41623d41f0a748843",
+      "lastSynced": "2026-06-17T21:21:14.208Z"
     },
     {
       "slug": "rust-quality",
@@ -229,7 +251,8 @@
       "starlightPage": "plugins/rust-quality",
       "npmPackage": "@awesome-pushup-standards/rust-quality",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.616Z"
+      "contentHash": "75590dc86e14adde6f5dc365760021a6902986f61a439912b6c09e288be6a7c0",
+      "lastSynced": "2026-06-17T21:21:14.208Z"
     },
     {
       "slug": "security-sast",
@@ -239,7 +262,8 @@
       "starlightPage": "plugins/security-sast",
       "npmPackage": "@awesome-pushup-standards/security-sast",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.616Z"
+      "contentHash": "83388f4db1800b9a4e139ea81815dc09eadbbe5f727d810b4c66627a88693b21",
+      "lastSynced": "2026-06-17T21:21:14.209Z"
     },
     {
       "slug": "ts-stack-detector",
@@ -249,7 +273,8 @@
       "starlightPage": "plugins/ts-stack-detector",
       "npmPackage": "@awesome-pushup-standards/ts-stack-detector",
       "publishedVia": "both",
-      "lastSynced": "2026-06-17T21:20:19.616Z"
+      "contentHash": "e6bfdb2b4778bb3857fcaa3706310a41e384ed09d8c08e320c2b71af0c200b40",
+      "lastSynced": "2026-06-17T21:21:14.209Z"
     }
   ]
 }
