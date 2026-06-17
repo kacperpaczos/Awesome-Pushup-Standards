@@ -1,17 +1,17 @@
 ---
 title: Monorepo CI/CD
-description: Monorepo CI/CD — awesome-pushup-standards
+description: CI/CD architecture, preset mapping, publication checklist, and deferred roadmap.
 ---
 
 # Monorepo CI/CD
 
-Ten dokument mapuje praktyki z [code-pushup/cli](https://github.com/code-pushup/cli) na audyty presetu `monorepo-ci-strict`.
+This document maps practices from [code-pushup/cli](https://github.com/code-pushup/cli) to audits in the `monorepo-ci-strict` preset.
 
-## Architektura (stan obecny)
+## Architecture (current)
 
 ```mermaid
 flowchart TB
-  subgraph local [Lokalnie — shift-left]
+  subgraph local [Local shift-left]
     HUSKY[husky + lint-staged]
     COMMIT[commitlint + commitizen]
     FMT[prettier + eslint]
@@ -24,14 +24,14 @@ flowchart TB
     GC[git-checks.yml]
     LB[pr-labeler.yml]
     AA[assign-pr-author.yml]
-    CI[ci.yml — format lint test build]
+    CI[ci.yml format lint test build docs]
     CP[code-pushup.yml]
     CPF[code-pushup-fork.yml]
   end
 
   subgraph release [Release]
-    REL[release.yml — changesets version PR]
-    PUB[publish.yml — disabled npm]
+    REL[release.yml changesets version PR]
+    PUB[publish.yml disabled npm]
   end
 
   local --> pr
@@ -40,7 +40,7 @@ flowchart TB
   REL --> PUB
 ```
 
-## Przepływ CI na PR
+## PR CI flow
 
 ```mermaid
 sequenceDiagram
@@ -56,32 +56,33 @@ sequenceDiagram
     GH->>Nx: lint test build
   end
   GH->>GH: format check
+  GH->>GH: docs verify + build
   GH->>GH: int-test collect
   GH->>GH: pkg-pr-new preview
   alt same-repo PR
     GH->>CP: code-pushup.yml
   else fork PR
-    GH->>CP: code-pushup-fork.yml bez sekretów
+    GH->>CP: code-pushup-fork.yml no secrets
   end
 ```
 
-## Mapowanie workflow → audyty
+## Workflow → audit mapping
 
-| Workflow                                  | Cel                                                    | Audyty                                               |
-| ----------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
-| `ci.yml`                                  | format, lint, unit (3 OS), build, int-test, pkg-pr-new | `multi-os-ci`, `nx-affected-ci`, `pkg-preview-on-pr` |
-| `code-pushup.yml`                         | Dogfooding na PR z tego samego repo                    | —                                                    |
-| `code-pushup-fork.yml`                    | Fork PR przez `pull_request_target`, bez sekretów      | `fork-safe-workflows`                                |
-| `dependency-review.yml`                   | Skan nowych zależności na PR                           | `dependency-review-workflow`                         |
-| `release.yml`                             | Changesets — PR wersjonujący                           | `separated-release-publish`, `release-environment`   |
-| `publish.yml`                             | Disabled — npm publish out of scope                    | —                                                    |
-| `pr-commitlint.yml`                       | Conventional PR titles                                 | `pr-commitlint`                                      |
-| `git-checks.yml`                          | Blokada commitów `fixup!`                              | —                                                    |
-| `pr-labeler.yml` / `assign-pr-author.yml` | Automatyzacja PR                                       | —                                                    |
+| Workflow                                  | Purpose                                                           | Audits                                               |
+| ----------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------- |
+| `ci.yml`                                  | format, lint, unit (3 OS), build, docs, int-test, e2e, pkg-pr-new | `multi-os-ci`, `nx-affected-ci`, `pkg-preview-on-pr` |
+| `code-pushup.yml`                         | Dogfooding on same-repo PRs                                       | —                                                    |
+| `code-pushup-fork.yml`                    | Fork PR via `pull_request_target`, no secrets                     | `fork-safe-workflows`                                |
+| `dependency-review.yml`                   | Scan new dependencies on PR                                       | `dependency-review-workflow`                         |
+| `release.yml`                             | Changesets — versioning PR                                        | `separated-release-publish`, `release-environment`   |
+| `publish.yml`                             | Disabled — npm publish out of scope                               | —                                                    |
+| `pr-commitlint.yml`                       | Conventional PR titles                                            | `pr-commitlint`                                      |
+| `git-checks.yml`                          | Block `fixup!` commits                                            | —                                                    |
+| `pr-labeler.yml` / `assign-pr-author.yml` | PR automation                                                     | —                                                    |
 
-## Shift-left (lokalnie)
+## Shift-left (local)
 
-| Plik                                                             | Audyt                   |
+| File                                                             | Audit                   |
 | ---------------------------------------------------------------- | ----------------------- |
 | `commitlint.config.js` + `.husky/commit-msg`                     | `conventional-commits`  |
 | `.husky/pre-commit`                                              | `pre-commit-hooks`      |
@@ -90,30 +91,30 @@ sequenceDiagram
 
 ## Nx affected
 
-CI używa `nrwl/nx-set-shas@v4` i `npx nx affected -t lint,test,build`.
+CI uses `nrwl/nx-set-shas@v4` and `npx nx affected -t lint,test,build`.
 
-Lokalnie:
+Locally:
 
 ```bash
 npx nx affected -t lint,test,build --base=main
 ```
 
-Submoduły (`submodules/`) są wykluczone z grafu Nx przez `.nxignore`.
+Submodules (`submodules/`) are excluded from the Nx graph via `.nxignore`.
 
-## Sekrety
+## Secrets
 
-| Secret                  | Wymagany | Cel                                  |
-| ----------------------- | -------- | ------------------------------------ |
-| `NX_CLOUD_ACCESS_TOKEN` | Opcjonal | Nx Cloud — zdalny cache              |
-| `CODECOV_TOKEN`         | Opcjonal | Upload coverage (patrz TODO poniżej) |
-| `CP_API_KEY`            | Opcjonal | Upload raportów code-pushup          |
+| Secret                  | Required | Purpose                           |
+| ----------------------- | -------- | --------------------------------- |
+| `NX_CLOUD_ACCESS_TOKEN` | Optional | Nx Cloud remote cache             |
+| `CODECOV_TOKEN`         | Optional | Coverage upload (see deferred §3) |
+| `CP_API_KEY`            | Optional | code-pushup report upload         |
 
-Publikacja paczek na **npm jest poza zakresem** (bez Trusted Publisher / OIDC). Wersje `0.1.0+` i changelogi są w repozytorium; `publish.yml` pozostaje wyłączony (`if: false`).
+npm package publish is **out of scope** (no Trusted Publisher / OIDC). Versions `0.1.0+` and changelogs live in the repo; `publish.yml` stays disabled (`if: false`).
 
-## Kategorie presetu `monorepo-ci-strict`
+## `monorepo-ci-strict` categories
 
 ```mermaid
-pie title Wagi kategorii (względne)
+pie title Category weights (relative)
   "ci-cd" : 60
   "release-security" : 40
   "contributor-experience" : 30
@@ -121,141 +122,141 @@ pie title Wagi kategorii (względne)
   "quality-leaps" : 10
 ```
 
-| Kategoria                  | Audyty (skrót)                                          |
+| Category                   | Audits (summary)                                        |
 | -------------------------- | ------------------------------------------------------- |
 | **ci-cd**                  | workflows, pinning, multi-OS, Nx, dependency review     |
 | **release-security**       | OIDC, separated release/publish, fork-safe, permissions |
 | **contributor-experience** | commitlint, husky, commitizen                           |
 | **documentation**          | README, SECURITY.md, CONTRIBUTING                       |
-| **quality-leaps**          | knip, pkg-pr-new, release environment (aspiracyjne)     |
+| **quality-leaps**          | knip, pkg-pr-new, release environment (aspirational)    |
 
 ---
 
-## Faza publikacji
+## Publication phase
 
-Checklist operacyjna dla maintainers — od lokalnego repo do wersjonowania w GitHub (bez npm publish).
+Operational checklist for maintainers — from local repo to GitHub versioning (no npm publish).
 
-### Przepływ
+### Flow
 
 ```mermaid
 sequenceDiagram
-  participant Local as Lokalne repo
+  participant Local as Local repo
   participant GH as GitHub
   participant CI as ci.yml
   participant CS as changesets
   Local->>GH: initial commit + push main
-  GH->>CI: format lint test build
+  GH->>CI: format lint test build docs
   Local->>GH: merge changeset version PR
   CS->>GH: tag v0.x.x in repo
 ```
 
 ### Checklist
 
-| Krok | Akcja                                                   | Status                                                                  |
+| Step | Action                                                  | Status                                                                  |
 | ---- | ------------------------------------------------------- | ----------------------------------------------------------------------- |
-| 1    | Rozszerzyć `.gitignore` (`.nx/`, `.pytest_cache/`)      | Done                                                                    |
-| 2    | `npm ci && npm run build && npm test && npm run pushup` | Done lokalnie                                                           |
-| 3    | Changeset initial release w `.changeset/`               | Done                                                                    |
+| 1    | Extend `.gitignore` (`.nx/`, `.pytest_cache/`, …)       | Done                                                                    |
+| 2    | `npm ci && npm run build && npm test && npm run pushup` | Done locally                                                            |
+| 3    | Changeset initial release in `.changeset/`              | Done                                                                    |
 | 4    | `git commit` + `git push -u origin main`                | Done — [repo](https://github.com/kacperpaczos/Awesome-Pushup-Standards) |
-| 5    | GitHub → Environments → utworzyć **`release`**          | Done (API)                                                              |
+| 5    | GitHub → Environments → create **`release`**            | Done (API)                                                              |
 | 5b   | Actions → allow workflows to create PRs                 | Done (API)                                                              |
-| 6    | npmjs.com → Trusted Publisher (repo + `publish.yml`)    | **Cancelled / out of scope** — publish tylko w repo, bez npm            |
-| 7    | Opcjonalnie: `NX_CLOUD_ACCESS_TOKEN`, `CP_API_KEY`      | Ręcznie                                                                 |
-| 8    | Branch protection na `main` (po zielonym CI)            | Ręcznie                                                                 |
+| 6    | npmjs.com → Trusted Publisher (repo + `publish.yml`)    | **Cancelled / out of scope** — repo-only publish, no npm                |
+| 7    | Optional: `NX_CLOUD_ACCESS_TOKEN`, `CP_API_KEY`         | Manual                                                                  |
+| 8    | Branch protection on `main` (after green CI)            | Manual                                                                  |
 
 ### npm publish (out of scope)
 
-Publikacja paczek `@awesome-pushup-standards/*` na npm **nie jest planowana** — brak konfiguracji Trusted Publisher / OIDC. Workflow `publish.yml` jest wyłączony. Wersjonowanie odbywa się w repozytorium (changesets, tagi `v*.*.*`, CHANGELOG per pakiet).
+Publishing `@awesome-pushup-standards/*` to npm is **not planned** — no Trusted Publisher / OIDC. `publish.yml` is disabled. Versioning happens in the repository (changesets, `v*.*.*` tags, per-package CHANGELOG).
 
-### Po pushu — weryfikacja
+### Post-push verification
 
-1. **Actions** — joby `ci.yml` zielone (ubuntu; windows/macos mogą ujawnić edge case'y).
-2. **Test PR** — `dependency-review`, `pr-commitlint`, komentarz code-pushup.
-3. Merge **Version Packages** PR (generowany przez `release.yml`).
-4. Tag `v*.*.*` w repozytorium dokumentuje release — bez publikacji na npm.
+1. **Actions** — `ci.yml` jobs green (ubuntu; windows/macos may surface edge cases).
+2. **Test PR** — `dependency-review`, `pr-commitlint`, code-pushup comment.
+3. Merge **Version Packages** PR (from `release.yml`).
+4. Tag `v*.*.*` documents the release — no npm publish.
 
-### Uwaga: `nx affected`
+### Note: `nx affected`
 
-Komenda `npx nx affected -t lint,test,build --base=main` wymaga **historii commitów na gałęzi `main`**. Przed pierwszym commitem użyj `npx nx run-many -t lint,test,build`.
+`npx nx affected -t lint,test,build --base=main` requires **commit history on `main`**. Before the first local commit, use `npx nx run-many -t lint,test,build`.
 
 ---
 
-## TODO — do rozważenia
+## Deferred roadmap
 
-**Pełna lista otwartych i odroczonych pozycji:** [backlog.md](/project/backlog/).
+**Full open and deferred list:** [backlog.md](/project/backlog/).
 
-Poniższe elementy są **świadomie odroczone** (szczegóły). Nie blokują obecnego CI; traktuj je jako roadmapę do dyskusji i kolejnych PR-ów.
+The items below are **consciously deferred**. They do not block current CI; treat them as roadmap for future PRs.
 
-### 1. GitHub App bot dla release commitów
+### 1. GitHub App release bot
 
-|                |                                                                                                                          |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| **Status**     | Odroczone (faza 2 release)                                                                                               |
-| **Problem**    | Commity z `changesets/action` idą jako `github-actions[bot]` — trudniejsze wymuszanie branch protection / signed commits |
-| **Propozycja** | Bot oparty na GitHub App (`GH_APP_ID`, `GH_APP_PRIVATE_KEY`) zamiast domyślnego `GITHUB_TOKEN`                           |
-| **Wymaga**     | Konfiguracja org/repo, uprawnienia App, sekrety w environment `release`                                                  |
-| **Wzorzec**    | [code-pushup/cli release workflow](https://github.com/code-pushup/cli/blob/main/.github/workflows/release.yml)           |
+|               |                                                                                                                |
+| ------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Status**    | Deferred (release phase 2)                                                                                     |
+| **Problem**   | `changesets/action` commits as `github-actions[bot]` — harder branch protection / signed commits               |
+| **Proposal**  | GitHub App bot (`GH_APP_ID`, `GH_APP_PRIVATE_KEY`) instead of default `GITHUB_TOKEN`                           |
+| **Requires**  | Org/repo App setup, permissions, secrets in `release` environment                                              |
+| **Reference** | [code-pushup/cli release workflow](https://github.com/code-pushup/cli/blob/main/.github/workflows/release.yml) |
 
-### 2. Pełne pinowanie SHA akcji GitHub
+### 2. Full SHA pinning
 
-|                 |                                                                                                                                 |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Odroczone                                                                                                                       |
-| **Stan obecny** | Akcje używają tagów wersji (`@v4`); audyt `actions-pinned` akceptuje tagi i lokalne composite actions (`./.github/actions/...`) |
-| **Docelowo**    | Wszystkie `uses:` wskazują pełny commit SHA (supply chain hardening)                                                            |
-| **Wymaga**      | Skrypt aktualizacji pinów + proces w CONTRIBUTING (np. comenda lub Dependabot dla Actions)                                      |
-| **Uwaga**       | Lokalne composite actions nie mają SHA — wykluczone z audytu                                                                    |
+|              |                                                                                                                             |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| **Status**   | Deferred                                                                                                                    |
+| **Current**  | Actions use version tags (`@v4`); `actions-pinned` audit accepts tags and local composite actions (`./.github/actions/...`) |
+| **Target**   | All `uses:` reference full commit SHA (supply chain hardening)                                                              |
+| **Requires** | Pin update script + CONTRIBUTING process (e.g. Dependabot for Actions)                                                      |
+| **Note**     | Local composite actions have no SHA — excluded from audit                                                                   |
 
-### 3. Codecov — matrix coverage per pakiet
+### 3. Codecov matrix coverage
 
-|                 |                                                                                                             |
-| --------------- | ----------------------------------------------------------------------------------------------------------- |
-| **Status**      | Odroczone (faza 2)                                                                                          |
-| **Stan obecny** | Brak `vitest --coverage` w pakietach; brak workflow `coverage.yml`                                          |
-| **Docelowo**    | Job Codecov per pakiet, secret `CODECOV_TOKEN`, badge w README                                              |
-| **Wzorzec**     | [code-pushup/cli coverage.yml](https://github.com/code-pushup/cli/blob/main/.github/workflows/coverage.yml) |
-| **Wymaga**      | `@vitest/coverage-v8` w pakietach, target Nx `coverage`, osobny workflow                                    |
+|               |                                                                                                             |
+| ------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Status**    | Deferred (phase 2)                                                                                          |
+| **Current**   | No `vitest --coverage` in packages; no `coverage.yml` workflow                                              |
+| **Target**    | Codecov job per package, `CODECOV_TOKEN` secret, README badge                                               |
+| **Reference** | [code-pushup/cli coverage.yml](https://github.com/code-pushup/cli/blob/main/.github/workflows/coverage.yml) |
+| **Requires**  | `@vitest/coverage-v8` in packages, Nx `coverage` target, separate workflow                                  |
 
-### 4. Nx Release zamiast Changesets
+### 4. Nx Release instead of Changesets
 
-|                 |                                                                                                                     |
-| --------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | Odroczone — osobna migracja                                                                                         |
-| **Stan obecny** | Changesets: `release.yml` (version PR) + `publish.yml` (tag OIDC)                                                   |
-| **Docelowo**    | `nx release` z conventional commits jako single source of truth wersji                                              |
-| **Wymaga**      | Stabilne conventional commits (już wdrożone lokalnie), migracja changelogów, aktualizacja audytów `release-quality` |
-| **Kiedy**       | Po kilku release'ach na Changesets, gdy commit history będzie spójna                                                |
+|              |                                                                                                   |
+| ------------ | ------------------------------------------------------------------------------------------------- |
+| **Status**   | Deferred — separate migration                                                                     |
+| **Current**  | Changesets: `release.yml` (version PR) + `publish.yml` (tag OIDC)                                 |
+| **Target**   | `nx release` with conventional commits as single version source                                   |
+| **Requires** | Stable conventional commits (already local), changelog migration, `release-quality` audit updates |
+| **When**     | After several Changesets releases with consistent commit history                                  |
 
-### 5. Nx Cloud (opcjonalny cache)
+### 5. Nx Cloud optional cache
 
-|             |                                                                                           |
-| ----------- | ----------------------------------------------------------------------------------------- |
-| **Status**  | Opcjonalny — włącza się gdy istnieje secret                                               |
-| **Korzyść** | Szybsze `nx affected` w CI przez distributed cache                                        |
-| **Wymaga**  | `NX_CLOUD_ACCESS_TOKEN` w repo secrets; audyt z wagą **0** w scoring model (informacyjny) |
+|              |                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------- |
+| **Status**   | Optional — enabled when secret exists                                                        |
+| **Benefit**  | Faster `nx affected` in CI via distributed cache                                             |
+| **Requires** | `NX_CLOUD_ACCESS_TOKEN` in repo secrets; audit weight **0** in scoring model (informational) |
 
-### 6. E2E w piramidzie testów Nx
+### 6. E2E in Nx test pyramid
 
-|                 |                                                                                                                                             |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Status**      | **Pending verification** — implementacja Done; weryfikacja lokalna + CI Pending — [backlog.md](/project/backlog/#pending--najbliższe-kroki) |
-| **Stan obecny** | 19× `e2e/plugin-*-e2e`, target Nx `e2e`, job `e2e` w `ci.yml` (kod wdrożony)                                                                |
-| **Piramida**    | unit (Vitest) → e2e per plugin (Docker collect) → `int-test` smoke monorepo                                                                 |
-| **Wzorzec**     | `e2e/*-e2e` w submodules/cli · [e2e-testing.md](/guides/e2e-testing/)                                                                       |
+|               |                                                                                                                        |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Status**    | **Pending verification** — implementation Done; local + CI verification Pending — [backlog](/project/backlog/#pending) |
+| **Current**   | 19× `e2e/plugin-*-e2e`, Nx `e2e` target, `e2e` job in `ci.yml`                                                         |
+| **Pyramid**   | unit (Vitest) → e2e per plugin (Docker collect) → `int-test` monorepo smoke                                            |
+| **Reference** | `e2e/*-e2e` in submodules/cli · [e2e-testing.md](/guides/e2e-testing/)                                                 |
 
-### Roadmapa (obecny → docelowy)
+### Roadmap (current → target)
 
 ```mermaid
 flowchart LR
-  subgraph now [Wdrożone]
+  subgraph now [Implemented]
     N1[Nx-lite + shift-left]
-    N2[10 workflowów]
+    N2[10 workflows]
     N3[repo versioning]
-    N4[3 pluginy CI/CD]
+    N4[3 CI/CD plugins]
     N5[monorepo-ci-strict]
   end
 
-  subgraph todo [TODO — do rozważenia]
+  subgraph todo [Deferred roadmap]
     T1[GitHub App bot]
     T2[SHA pinning]
     T3[Codecov matrix]
@@ -267,13 +268,13 @@ flowchart LR
   now --> todo
 ```
 
-### Priorytetyzacja (sugestia)
+### Prioritization (suggested)
 
-| Priorytet | Element           | Effort | Impact              |
-| --------- | ----------------- | ------ | ------------------- |
-| **P1**    | E2E Docker verify | Niski  | Zamknięcie Fazy 7   |
-| P2        | SHA pinning       | Średni | Supply chain        |
-| P2        | Codecov matrix    | Średni | Widoczność coverage |
-| P3        | GitHub App bot    | Wysoki | Release hygiene     |
-| P3        | Nx Cloud          | Niski  | Szybkość CI         |
-| P4        | Nx Release        | Wysoki | Uproszczenie CD     |
+| Priority | Item              | Effort | Impact              |
+| -------- | ----------------- | ------ | ------------------- |
+| **P1**   | E2E Docker verify | Low    | Close Phase 7       |
+| P2       | SHA pinning       | Medium | Supply chain        |
+| P2       | Codecov matrix    | Medium | Coverage visibility |
+| P3       | GitHub App bot    | High   | Release hygiene     |
+| P3       | Nx Cloud          | Low    | CI speed            |
+| P4       | Nx Release        | High   | Simplify CD         |
