@@ -1,6 +1,6 @@
 {
   "name": "@awesome-pushup-standards/monorepo-ci-strict",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,12 +15,12 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "@awesome-pushup-standards/audit-contract": "0.1.0",
+    "@awesome-pushup-standards/audit-contract": "0.2.0",
     "@awesome-pushup-standards/cicd-quality": "0.1.0",
     "@awesome-pushup-standards/contributor-hygiene": "0.1.0",
     "@awesome-pushup-standards/docs-quality": "0.1.0",
     "@awesome-pushup-standards/release-quality": "0.1.0",
-    "@awesome-pushup-standards/security-sast": "0.1.0"
+    "@awesome-pushup-standards/security-sast": "1.0.0"
   },
   "peerDependencies": {
     "@code-pushup/models": "*"
