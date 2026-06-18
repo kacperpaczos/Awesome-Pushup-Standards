@@ -73,9 +73,11 @@ const PLUGINS = [
       'SECURITY.md': '# Security\n',
       '.github/workflows/publish.yml':
         'permissions:\n  id-token: write\njobs:\n  publish:\n    environment: release\n',
-      '.github/workflows/release.yml': 'jobs:\n  release:\n    permissions:\n      contents: write\n',
+      '.github/workflows/release.yml':
+        'jobs:\n  release:\n    permissions:\n      contents: write\n',
       '.github/workflows/pr-commitlint.yml': 'on:\n  pull_request:\n',
-      '.github/workflows/ci.yml': 'jobs:\n  preview:\n    steps:\n      - run: npx pkg-pr-new publish\n',
+      '.github/workflows/ci.yml':
+        'jobs:\n  preview:\n    steps:\n      - run: npx pkg-pr-new publish\n',
     },
     bad: {},
   },
@@ -129,7 +131,8 @@ const PLUGINS = [
     good: {
       Dockerfile:
         'FROM node:20-bookworm AS deps\nWORKDIR /app\nCOPY package.json .\nRUN npm ci\n\nFROM node:20-bookworm\nWORKDIR /app\nCOPY --from=deps /app/node_modules ./node_modules\nCOPY . .\nCMD ["node", "index.js"]\n',
-      '.github/workflows/ci.yml': 'jobs:\n  scan:\n    steps:\n      - run: trivy image app:latest\n',
+      '.github/workflows/ci.yml':
+        'jobs:\n  scan:\n    steps:\n      - run: trivy image app:latest\n',
     },
     bad: {
       Dockerfile: 'FROM node:20-bookworm\nWORKDIR /app\nCOPY . .\nCMD ["node", "index.js"]\n',
@@ -142,10 +145,10 @@ const PLUGINS = [
     badAudit: 'ruff-lint',
     goodExcludeAudits: ['line-coverage', 'dependency-vulnerabilities'],
     good: {
-      'pyproject.toml':
-        '[project]\nname = "demo"\n\n[tool.bandit]\nskips = ["B101"]\n',
+      'pyproject.toml': '[project]\nname = "demo"\n\n[tool.bandit]\nskips = ["B101"]\n',
       'demo.py': 'def add(a: int, b: int) -> int:\n    return a + b\n',
-      'test_demo.py': 'from demo import add\n\ndef test_add():\n    if add(1, 2) != 3:\n        raise AssertionError("expected 3")\n',
+      'test_demo.py':
+        'from demo import add\n\ndef test_add():\n    if add(1, 2) != 3:\n        raise AssertionError("expected 3")\n',
     },
     bad: {
       'pyproject.toml': '[project]\nname = "demo"\n',
@@ -204,12 +207,14 @@ const PLUGINS = [
     options: 'rootDir',
     badAudit: 'qt-api-misuse',
     good: {
-      'CMakeLists.txt': 'cmake_minimum_required(VERSION 3.16)\nproject(demo)\nfind_package(Qt6 REQUIRED)\n',
+      'CMakeLists.txt':
+        'cmake_minimum_required(VERSION 3.16)\nproject(demo)\nfind_package(Qt6 REQUIRED)\n',
       '.clang-tidy': 'Checks: "-*,qt-*"\n',
       'main.cpp': '#include <QtCore>\n',
     },
     bad: {
-      'CMakeLists.txt': 'cmake_minimum_required(VERSION 3.16)\nproject(demo)\nfind_package(Qt6 REQUIRED)\n',
+      'CMakeLists.txt':
+        'cmake_minimum_required(VERSION 3.16)\nproject(demo)\nfind_package(Qt6 REQUIRED)\n',
       'main.cpp': '#include <QtCore>\n',
     },
   },
@@ -259,7 +264,8 @@ const PLUGINS = [
     options: 'rootDir',
     badAudit: 'bare-except',
     good: {
-      'app.py': 'import logging\nlogger = logging.getLogger(__name__)\n\ndef run():\n    try:\n        pass\n    except ValueError as exc:\n        logger.exception("failed", exc_info=exc)\n',
+      'app.py':
+        'import logging\nlogger = logging.getLogger(__name__)\n\ndef run():\n    try:\n        pass\n    except ValueError as exc:\n        logger.exception("failed", exc_info=exc)\n',
     },
     bad: {
       'app.py': 'def run():\n    try:\n        pass\n    except:\n        pass\n',
@@ -286,10 +292,12 @@ const PLUGINS = [
     options: 'llm',
     badAudit: 'architecture-review',
     good: {
-      'src/sample.ts': 'export function greet(name: string): string {\n  return `Hello, ${name}`;\n}\n',
+      'src/sample.ts':
+        'export function greet(name: string): string {\n  return `Hello, ${name}`;\n}\n',
     },
     bad: {
-      'src/sample.ts': 'export function greet(name: string): string {\n  return `Hello, ${name}`;\n}\n',
+      'src/sample.ts':
+        'export function greet(name: string): string {\n  return `Hello, ${name}`;\n}\n',
     },
   },
 ];
@@ -514,7 +522,10 @@ for (const plugin of PLUGINS) {
       plugin.goodExcludeAudits ?? [],
     ),
   );
-  await writeFile(join(root, 'project.json'), `${JSON.stringify(projectJson(plugin.slug), null, 2)}\n`);
+  await writeFile(
+    join(root, 'project.json'),
+    `${JSON.stringify(projectJson(plugin.slug), null, 2)}\n`,
+  );
   await writeFile(
     join(root, 'vitest.e2e.config.ts'),
     `import rootConfig from '../../vitest.e2e.config.js';\nexport default rootConfig;\n`,

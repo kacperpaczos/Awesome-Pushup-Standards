@@ -43,7 +43,7 @@ In `monorepo-ci-strict`, optional infrastructure (e.g. Nx Cloud remote cache, Co
 
 Heuristic audits in `quality-leaps` categories are aspirational — they suggest adoption (pydantic, Zod, TypeScript) rather than penalize existing code errors.
 
-Optional infrastructure audits (Nx Cloud, Codecov) should use weight **0** until implemented — see [monorepo-ci.md — TODO](/project/monorepo-ci/#todo--do-rozwazenia).
+Optional infrastructure audits (Nx Cloud, Codecov) should use weight **0** until implemented — see [monorepo-ci — deferred roadmap](/project/monorepo-ci/#deferred-roadmap).
 
 ## Non-blocking philosophy
 

@@ -1,6 +1,6 @@
 ---
 title: Audit contracts
-description: Matryca kontraktów audytów — rigor Base vs Strict, brak narzędzia vs naruszenie.
+description: Audit contract matrix — rigor Base vs Strict, missing tool vs violation.
 ---
 
 # Audit contracts

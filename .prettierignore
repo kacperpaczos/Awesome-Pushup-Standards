@@ -7,3 +7,9 @@ package-lock.json
 *.tsbuildinfo
 .pytest_cache
 .nx
+apps/docs/doc-registry.json
+apps/docs/sidebar.generated.mjs
+apps/docs/src/content/docs/plugins
+apps/docs/src/content/docs/presets
+apps/docs/src/content/docs/reference/documentation-registry.md
+apps/docs/src/content/docs/reference/plugins-catalog.md

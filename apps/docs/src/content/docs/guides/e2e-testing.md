@@ -412,7 +412,7 @@ GitHub Actions job `e2e` in `.github/workflows/ci.yml` runs `npm run e2e:rebuild
 
 ## Verification checklist
 
-Status operacyjny: **[backlog.md#pending--najbliższe-kroki](/project/backlog/#pending--najbliższe-kroki)**.
+Operational status: **[backlog — Pending](/project/backlog/#pending)**.
 
 | Step                                 | Command / action                     | Status                          |
 | ------------------------------------ | ------------------------------------ | ------------------------------- |

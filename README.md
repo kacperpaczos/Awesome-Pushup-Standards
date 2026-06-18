@@ -21,6 +21,7 @@ npm run docs:build  # sync package READMEs + static build
 | E2E contract tests     | [guides/e2e-testing](apps/docs/src/content/docs/guides/e2e-testing.md)                             |
 | Contributing           | [guides/contributing](apps/docs/src/content/docs/guides/contributing.md)                           |
 | Backlog                | [project/backlog](apps/docs/src/content/docs/project/backlog.md)                                   |
+| Project vision         | [project/vision](apps/docs/src/content/docs/project/vision.md)                                     |
 
 ## Quick start
 
@@ -42,6 +43,7 @@ npx code-pushup collect
 ```bash
 npm ci && npm run build
 npm run test:all
+npm run docs:verify   # after packages/*/README.md changes
 npm run e2e:rebuild   # Docker images + 38 E2E collects
 npm run pushup        # smoke: full monorepo preset
 ```

@@ -1,10 +1,10 @@
 ---
-title: 'rust-quality'
-description: 'Wraps `cargo clippy`, `rustfmt`, `cargo audit`, and `cargo tarpaulin`.'
-domain: 'Rust'
-packageSlug: 'rust-quality'
-packageKind: 'plugin'
-sourceReadme: 'packages/plugins/rust-quality/README.md'
+title: "rust-quality"
+description: "Wraps `cargo clippy`, `rustfmt`, `cargo audit`, and `cargo tarpaulin`."
+domain: "Rust"
+packageSlug: "rust-quality"
+packageKind: "plugin"
+sourceReadme: "packages/plugins/rust-quality/README.md"
 ---
 
 > **Edit source:** [packages/plugins/rust-quality/README.md](https://github.com/kacperpaczos/Awesome-Pushup-Standards/blob/main/packages/plugins/rust-quality/README.md) — this page is synced by `npm run docs:sync`.

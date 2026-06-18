@@ -23,7 +23,7 @@ See [Plugins catalog](/reference/plugins-catalog/) for a full overview of what e
 | Docker         | `docker-quality`                                         | Done                                                                    |
 | Documentation  | `docs-quality`                                           | Done — see [Documentation registry](/reference/documentation-registry/) |
 | CI/CD          | `cicd-quality`, `contributor-hygiene`, `release-quality` | Done                                                                    |
-| CI/CD roadmap  | —                                                        | [Deferred](/project/backlog/#deferred--odroczone)                       |
+| CI/CD roadmap  | —                                                        | [Deferred](/project/backlog/#deferred)                                  |
 | LLM review     | `llm-review`                                             | Done                                                                    |
 
 ## Presets

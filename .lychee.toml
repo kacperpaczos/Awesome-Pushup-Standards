@@ -1,0 +1,14 @@
+# Lychee link checker — run after `npm run docs:build` on apps/docs/dist/
+verbose = "error"
+no_progress = true
+max_redirects = 5
+max_retries = 3
+accept = ["200", "403", "429"]
+exclude_mail = true
+
+exclude_path = [
+  "apps/docs/dist/pagefind/**",
+]
+
+# npm registry and GitHub are checked; flaky hosts can be added here
+# exclude = ['^https://img.shields.io/']

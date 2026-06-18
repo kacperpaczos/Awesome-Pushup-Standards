@@ -11,6 +11,13 @@
     "build": {
       "executor": "nx:run-script",
       "options": { "script": "build" }
+    },
+    "verify": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run docs:verify",
+        "cwd": "{workspaceRoot}"
+      }
     }
   }
 }
