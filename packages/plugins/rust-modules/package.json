@@ -1,6 +1,6 @@
 {
   "name": "@awesome-pushup-standards/rust-modules",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,6 +19,6 @@
     "@code-pushup/models": "*"
   },
   "dependencies": {
-    "@awesome-pushup-standards/audit-contract": "0.1.0"
+    "@awesome-pushup-standards/audit-contract": "0.2.0"
   }
 }
